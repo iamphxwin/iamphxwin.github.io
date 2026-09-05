@@ -39,14 +39,12 @@ html, body {
   overflow: hidden;
 }
 
-/* ---------- BACKGROUND LAYER & PHOTOREALISTIC LIGHTING ---------- */
 #bgLayer {
   position: absolute; inset: 0; z-index: 0;
   background: 
     radial-gradient(circle at 50% 30%, #0d211a 0%, #050b08 60%, #010302 100%);
 }
 
-/* Wall lab texture overlay */
 .lab-wall {
   position: absolute; inset: 0;
   background: 
@@ -56,7 +54,6 @@ html, body {
   opacity: 0.6;
 }
 
-/* Realistic volumetric fog layers */
 .fog {
   position: absolute; left: -50%; width: 200%; height: 100%; bottom: 0;
   background: radial-gradient(ellipse at 50% 80%, rgba(0, 255, 102, 0.08) 0%, rgba(5, 15, 10, 0.4) 50%, transparent 80%);
@@ -84,7 +81,6 @@ html, body {
   background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.92) 100%);
 }
 
-/* Scanlines CRT effect for cinematic sci-fi feel */
 .scanlines {
   position: absolute; inset: 0; z-index: 6; pointer-events: none;
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
@@ -92,7 +88,54 @@ html, body {
   opacity: 0.7;
 }
 
-/* ---------- SCENES ---------- */
+/* ---------- DARK GLITCH & ERROR OVERLAY EFFECTS (EYE-FRIENDLY) ---------- */
+#glitchOverlay {
+  position: absolute; inset: 0; z-index: 99; pointer-events: none; opacity: 0;
+  background: rgba(0, 5, 3, 0.75);
+  mix-blend-mode: multiply;
+  transition: opacity 0.1s ease;
+}
+
+#errorBanner {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 100; pointer-events: none; opacity: 0;
+  font-family: 'Share Tech Mono', monospace; font-size: clamp(18px, 4.5vw, 36px);
+  font-weight: bold; 
+  color: #a81c2a; 
+  text-shadow: -2px 0 #005533, 2px 0 #330011;
+  letter-spacing: 4px; text-transform: uppercase; 
+  border: 1px solid #5a1018;
+  padding: 12px 28px; 
+  background: rgba(3, 5, 4, 0.95); 
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(168, 28, 42, 0.3);
+  white-space: nowrap; transition: opacity 0.1s;
+}
+
+.glitch-active #app {
+  animation: darkGlitch 0.25s infinite alternate;
+  filter: contrast(130%) brightness(75%) hue-rotate(15deg);
+}
+
+.glitch-severe #app {
+  animation: severeDarkGlitch 0.12s infinite;
+  filter: contrast(180%) brightness(60%) grayscale(40%);
+}
+
+@keyframes darkGlitch {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-3px, 2px) skewX(0.8deg); }
+  50% { transform: translate(4px, -1px) scale(0.998); }
+  75% { transform: translate(-2px, -3px) skewX(-0.5deg); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes severeDarkGlitch {
+  0% { transform: translate(-6px, 4px) scale(1.01); filter: brightness(40%) contrast(200%); }
+  33% { transform: translate(6px, -4px) skewX(3deg); filter: brightness(70%) grayscale(80%); }
+  66% { transform: translate(-4px, -5px) scale(0.99); filter: brightness(30%); }
+  100% { transform: translate(0, 0); }
+}
+
 .scene {
   position: absolute; inset: 0; z-index: 10;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -105,7 +148,6 @@ html, body {
 }
 .scene.active { opacity: 1; visibility: visible; transform: scale(1); }
 
-/* ---------- TYPOGRAPHY & HEADERS ---------- */
 h1.title {
   font-family: 'Creepster', cursive;
   color: var(--acid);
@@ -142,7 +184,6 @@ p.lore {
   text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
-/* Creepy Bio Eye Indicator */
 .eyes {
   width: 90px; height: 30px; margin: 10px auto 20px auto;
   display: flex; justify-content: center; gap: 20px;
@@ -159,7 +200,6 @@ p.lore {
   95% { transform: scaleY(0.05); }
 }
 
-/* ---------- HIGH-TECH BUTTONS ---------- */
 .btn {
   font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
@@ -203,7 +243,6 @@ p.lore {
 }
 .icon-toggle:hover { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
 
-/* ---------- GAME SCENE ---------- */
 #gameScene { justify-content: flex-start; padding-top: 2vh; }
 .hud {
   width: 100%; max-width: 680px;
@@ -214,7 +253,6 @@ p.lore {
 }
 .hud .doorCount { font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 8px var(--acid-glow); }
 
-/* Realistic Chemical Vials */
 .vials { display: flex; gap: 10px; }
 .vial {
   width: 16px; height: 32px;
@@ -245,7 +283,6 @@ p.lore {
   width: 0%; transition: width .5s ease;
 }
 
-/* 3D Stage Environment */
 .stage {
   position: relative; width: 100%; max-width: 680px; height: 30vh; min-height: 180px;
   margin-bottom: 12px;
@@ -256,7 +293,6 @@ p.lore {
   box-shadow: inset 0 0 40px #000;
 }
 
-/* Photorealistic Lab Horror Monster */
 .ghost {
   position: absolute; bottom: -5%;
   right: 88%;
@@ -273,7 +309,6 @@ p.lore {
   transition: right .3s ease-in, transform .3s;
 }
 
-/* Realistic Metal Door */
 .doorWrap {
   position: absolute; left: 6%; bottom: 0; width: 120px; height: 90%;
   perspective: 800px;
@@ -306,7 +341,6 @@ p.lore {
   border-radius: 2px; box-shadow: 0 0 8px var(--hazard);
 }
 
-/* Tactical Interface Panel */
 .panel {
   width: 100%; max-width: 680px;
   background: var(--panel-bg);
@@ -374,7 +408,6 @@ p.lore {
   100% { background: var(--panel-bg); }
 }
 
-/* END SCREENS */
 #gameOverScene h1.title { color: var(--blood); text-shadow: 0 0 15px var(--blood-glow), 0 0 40px var(--blood-glow); }
 #winScene h1.title { color: var(--acid); }
 
@@ -388,7 +421,6 @@ p.lore {
 #nameInput:focus { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
 .saveNote { font-size: 12px; color: var(--bone-dim); max-width: 420px; margin: 0 auto 8px auto; }
 
-/* LEADERBOARD */
 .lbWrap {
   width: 100%; max-width: 520px;
   background: var(--panel-bg);
@@ -418,6 +450,9 @@ p.lore {
 </head>
 <body>
 <div id="app">
+  <div id="glitchOverlay"></div>
+  <div id="errorBanner">SYSTEM_ERROR</div>
+
   <div id="bgLayer">
     <div class="lab-wall"></div>
     <div class="fog"></div>
@@ -429,7 +464,6 @@ p.lore {
 
   <button class="icon-toggle" id="soundToggle" title="เปิด/ปิดเสียง">🔊</button>
 
-  <!-- START SCENE -->
   <section class="scene active" id="startScene">
     <h1 class="title">เอาตัวรอดใน<br>แลปปริศนา</h1>
     <div class="subtitle">BIO-HAZARD ESCAPE PROTOCOL</div>
@@ -441,7 +475,6 @@ p.lore {
     </div>
   </section>
 
-  <!-- STORY SCENE -->
   <section class="scene" id="storyScene">
     <h1 class="title" style="font-size:clamp(26px,5vw,38px)">บันทึกเหตุการณ์...</h1>
     <p class="lore">
@@ -458,7 +491,6 @@ p.lore {
     <button class="btn" id="btnToGame">เข้าสู่พื้นที่ปลดล็อก</button>
   </section>
 
-  <!-- GAME SCENE -->
   <section class="scene" id="gameScene">
     <div class="hud">
       <div class="doorCount">SEC_DOOR: <span id="doorNum">01</span> / <span id="doorTotal">14</span></div>
@@ -474,7 +506,6 @@ p.lore {
         </div>
       </div>
       
-      <!-- Realistic Photorealistic Vector Monster -->
       <div class="ghost" id="ghost">
         <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -493,18 +524,14 @@ p.lore {
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
-          <!-- Shadow Body -->
           <path d="M100 20 C50 20 20 60 15 120 C10 170 30 220 40 230 C50 210 65 215 80 235 C95 210 105 210 120 235 C135 215 150 210 160 230 C170 220 190 170 185 120 C180 60 150 20 100 20 Z" fill="url(#bodyGrad)" opacity="0.95"/>
-          <!-- Organic Tendrils -->
           <path d="M30 140 Q 10 180 5 220" stroke="#12211a" stroke-width="6" fill="none" stroke-linecap="round"/>
           <path d="M170 140 Q 190 180 195 220" stroke="#12211a" stroke-width="6" fill="none" stroke-linecap="round"/>
-          <!-- Glowing Fiendish Eyes -->
           <circle cx="70" cy="95" r="12" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
           <circle cx="130" cy="95" r="12" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
           <circle cx="72" cy="93" r="3" fill="#ffffff"/>
           <circle cx="132" cy="93" r="3" fill="#ffffff"/>
           <circle cx="100" cy="75" r="6" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
-          <!-- Monster Jaw & Teeth -->
           <path d="M65 145 Q100 180 135 145 Q100 155 65 145 Z" fill="#050806"/>
           <path d="M70 146 L75 155 L80 147 L87 157 L93 148 L100 159 L107 148 L114 157 L120 147 L126 155 L130 146" stroke="#d3e0d8" stroke-width="2.5" fill="none"/>
         </svg>
@@ -519,7 +546,6 @@ p.lore {
     </div>
   </section>
 
-  <!-- GAME OVER SCENE -->
   <section class="scene" id="gameOverScene">
     <h1 class="title">คุณตกเป็นอาหารของมัน</h1>
     <p class="lore">สิ่งทดลองกักขังเข้าถึงตัวคุณ... เสียงสัญญาณเตือนภัยดังล้มเหลวไปพร้อมกับลมหายใจสุดท้าย</p>
@@ -530,7 +556,6 @@ p.lore {
     </div>
   </section>
 
-  <!-- WIN SCENE -->
   <section class="scene" id="winScene">
     <h1 class="title">หลบหนีสำเร็จ!</h1>
     <p class="lore">ประตูแรงดันบานสุดท้ายเปิดออก แสงสว่างภายนอกส่องเข้ามา คุณสามารถรอดชีวิตออกจากแล็บมรณะได้สำเร็จ</p>
@@ -548,7 +573,6 @@ p.lore {
     </div>
   </section>
 
-  <!-- LEADERBOARD SCENE -->
   <section class="scene" id="lbScene">
     <h1 class="title" style="font-size:clamp(24px,5vw,36px)">🏆 บันทึกผู้รอดชีวิต</h1>
     <div class="lbWrap" id="lbList">
@@ -559,7 +583,6 @@ p.lore {
 </div>
 
 <script>
-/* ================= QUESTIONS ================= */
 const QUESTIONS = [
   {q:"พลังงานอิสระของน้ำต่อ 1 หน่วยปริมาตร ซึ่งจะมีผลต่อทิศทางการเคลื่อนที่ของน้ำ เรียกว่าอะไร", ans:"Water Potential"},
   {q:"ธาตุอาหารที่จำเป็นต่อการเจริญเติบโตของพืชที่พืชต้องการในปริมาณมาก คืออะไร", ans:"Macronutrient"},
@@ -593,10 +616,8 @@ function buildOptions(correctAns){
   return shuffle([correctAns, ...distractors]);
 }
 
-/* ================= STATE ================= */
 let state = { doorIndex:0, wrong:0, soundOn:true, startTime:0, currentOptions:[] };
 
-/* ================= AUDIO ENGINE (Procedural Audio Synthesizer) ================= */
 let actx = null;
 function ensureAudio(){
   if(!actx){
@@ -689,6 +710,21 @@ function playCorrect(){
 }
 function playWrong(){
   toneBurst(130, 0.35, 'sawtooth', 0.12, 60);
+  playGlitchNoise();
+}
+function playGlitchNoise(){
+  if(!actx || !state.soundOn) return;
+  const bufferSize = actx.sampleRate * 0.2;
+  const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0; i<bufferSize; i++){ data[i] = (Math.random()*2-1); }
+  const src = actx.createBufferSource();
+  src.buffer = buffer;
+  const gain = actx.createGain();
+  gain.gain.setValueAtTime(0.1, actx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.2);
+  src.connect(gain); gain.connect(actx.destination);
+  src.start();
 }
 function playDoorCreak(){
   if(!actx || !state.soundOn) return;
@@ -720,7 +756,6 @@ function playWinChime(){
   });
 }
 
-/* Atmospheric visual flicker */
 setInterval(()=>{
   const fl = document.getElementById('flicker');
   if(Math.random() < 0.07){
@@ -729,7 +764,6 @@ setInterval(()=>{
   }
 }, 800);
 
-/* ================= SCENE NAV ================= */
 function showScene(id){
   document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -750,16 +784,34 @@ document.getElementById('soundToggle').addEventListener('click', (e)=>{
   if(state.soundOn){ ensureAudio(); } else { stopAmbient(); }
 });
 
-/* ================= GAME LOGIC ================= */
 document.getElementById('doorTotal').textContent = QUESTIONS.length;
 
 function resetGame(){
   state.doorIndex = 0;
   state.wrong = 0;
   state.startTime = Date.now();
+  document.body.classList.remove('glitch-active', 'glitch-severe');
   renderVials();
   updateGhost();
   loadQuestion();
+}
+
+function triggerGlitchEffect(isCritical = false){
+  const overlay = document.getElementById('glitchOverlay');
+  const banner = document.getElementById('errorBanner');
+  
+  banner.textContent = isCritical ? 'CRITICAL_FAILURE // SYSTEM_CRASH' : 'SYSTEM_ERROR // ACCESS_DENIED';
+  document.body.classList.add(isCritical ? 'glitch-severe' : 'glitch-active');
+  overlay.style.opacity = isCritical ? '0.85' : '0.5';
+  banner.style.opacity = '1';
+
+  setTimeout(()=>{
+    if(!isCritical){
+      document.body.classList.remove('glitch-active');
+      overlay.style.opacity = '0';
+      banner.style.opacity = '0';
+    }
+  }, isCritical ? 1200 : 450);
 }
 
 function renderVials(){
@@ -839,6 +891,7 @@ function selectOption(chosen, btnEl){
     state.wrong++;
     renderVials();
     updateGhost();
+    
     feedback.textContent = 'ACCESS DENIED // ระบบรักษาความปลอดภัยล้มเหลว!';
     feedback.className = 'feedback wrong';
     panel.classList.remove('flashRed'); void panel.offsetWidth; panel.classList.add('flashRed');
@@ -846,8 +899,10 @@ function selectOption(chosen, btnEl){
     document.getElementById('gameScene').classList.add('shake');
 
     if(state.wrong >= MAX_WRONG){
-      setTimeout(()=>loseGame(), 900);
+      triggerGlitchEffect(true);
+      setTimeout(()=>loseGame(), 1000);
     } else {
+      triggerGlitchEffect(false);
       setTimeout(()=>{
         allBtns.forEach(b=>{ b.disabled=false; b.classList.remove('isWrong','isCorrect'); });
         feedback.textContent='';
@@ -859,8 +914,12 @@ function selectOption(chosen, btnEl){
 function loseGame(){
   const ghost = document.getElementById('ghost');
   ghost.classList.add('lunge');
+  playScream();
+  
   setTimeout(()=>{
-    playScream();
+    document.body.classList.remove('glitch-severe');
+    document.getElementById('glitchOverlay').style.opacity = '0';
+    document.getElementById('errorBanner').style.opacity = '0';
     document.getElementById('failCount').textContent = state.wrong;
     document.getElementById('failDoor').textContent = state.doorIndex+1;
     showScene('gameOverScene');
@@ -886,7 +945,6 @@ function winGame(){
   setTimeout(()=>showScene('winScene'), 400);
 }
 
-/* ================= LEADERBOARD ================= */
 const LB_KEY = 'lab_escape_leaderboard';
 
 async function loadLeaderboard(){
