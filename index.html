@@ -3,348 +3,427 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>เอาตัวรอดในแลปปริศนา</title>
+<title>เอาตัวรอดในแลปปริศนา - BIO-HAZARD ESCAPE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nosifer&family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Creepster&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-:root{
-  --void:#050806;
-  --panel:#0c1611;
-  --panel-2:#101d16;
-  --acid:#49ff7a;
-  --acid-dim:#1f7a3d;
-  --spirit:#9b6bff;
-  --blood:#d1263a;
-  --bone:#e7e2cf;
-  --bone-dim:#8b9a8d;
-  --hazard:#e8c547;
-}
-*{box-sizing:border-box;}
-html,body{
-  margin:0;padding:0;width:100%;height:100%;
-  background:var(--void);
-  color:var(--bone);
-  font-family:'Special Elite',monospace;
-  overflow:hidden;
-  -webkit-user-select:none;user-select:none;
-}
-#app{
-  position:relative;
-  width:100%;height:100vh;height:100dvh;
-  overflow:hidden;
+:root {
+  --void: #020304;
+  --panel-bg: rgba(8, 14, 18, 0.88);
+  --panel-border: #1e3b30;
+  --acid: #00ff66;
+  --acid-glow: rgba(0, 255, 102, 0.4);
+  --acid-dim: #0a5228;
+  --spirit: #aa33ff;
+  --blood: #ff1e38;
+  --blood-glow: rgba(255, 30, 56, 0.5);
+  --bone: #d3e0d8;
+  --bone-dim: #5c7567;
+  --hazard: #ffb700;
+  --metal: #182226;
 }
 
-/* ---------- background layer (persistent) ---------- */
-#bgLayer{
-  position:absolute;inset:0;z-index:0;
-  background:
-    radial-gradient(ellipse at 50% 0%, #0e2016 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 100%, #16100a 0%, transparent 55%),
-    linear-gradient(180deg,#040705 0%, #050b07 45%, #020403 100%);
-}
-.fog{
-  position:absolute;left:-20%;width:140%;height:40%;bottom:0;
-  background:linear-gradient(180deg, rgba(73,255,122,0) 0%, rgba(20,40,25,0.35) 100%);
-  filter:blur(18px);
-  animation:drift 26s linear infinite;
-  pointer-events:none;
-}
-.fog.f2{bottom:-5%;height:30%;opacity:0.5;animation-duration:34s;animation-direction:reverse;}
-@keyframes drift{
-  0%{transform:translateX(-4%);}
-  50%{transform:translateX(4%);}
-  100%{transform:translateX(-4%);}
-}
-#trees{
-  position:absolute;bottom:0;left:0;width:100%;height:38%;
-  z-index:1;pointer-events:none;
-  opacity:0.9;
-}
-#flicker{
-  position:absolute;inset:0;z-index:5;background:#000;opacity:0;
-  pointer-events:none;
-}
-.vignette{
-  position:absolute;inset:0;z-index:4;pointer-events:none;
-  box-shadow:inset 0 0 18vw 4vw rgba(0,0,0,0.85);
-}
-.grain{
-  position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0.06;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: var(--void);
+  color: var(--bone);
+  font-family: 'Chakra Petch', sans-serif;
+  overflow: hidden;
+  -webkit-user-select: none; user-select: none;
 }
 
-/* ---------- scenes ---------- */
-.scene{
-  position:absolute;inset:0;z-index:10;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:6vw 6vw;
-  opacity:0;visibility:hidden;
-  transition:opacity .5s ease;
-  text-align:center;
-  overflow-y:auto;
-}
-.scene.active{opacity:1;visibility:visible;}
-
-/* ---------- typography ---------- */
-h1.title{
-  font-family:'Nosifer',cursive;
-  color:var(--acid);
-  font-size:clamp(28px,7vw,58px);
-  line-height:1.25;
-  text-shadow:0 0 6px var(--acid), 0 0 22px rgba(73,255,122,0.5), 0 0 60px rgba(73,255,122,0.25);
-  margin:0 0 6px 0;
-  animation:flick 4.2s infinite;
-  letter-spacing:1px;
-}
-@keyframes flick{
-  0%,19%,21%,23%,80%,100%{opacity:1;}
-  20%{opacity:0.4;}
-  22%{opacity:0.85;}
-}
-.subtitle{
-  color:var(--hazard);
-  font-size:clamp(12px,3vw,16px);
-  letter-spacing:3px;
-  margin-bottom:28px;
-  opacity:0.85;
-}
-p.lore{
-  font-size:clamp(14px,3.4vw,18px);
-  line-height:1.9;
-  color:var(--bone);
-  max-width:560px;
-  margin:0 auto 10px auto;
-}
-.eyes{
-  width:70px;height:26px;margin:6px auto 22px auto;
-  display:flex;justify-content:center;gap:16px;
-}
-.eyes span{
-  width:14px;height:14px;border-radius:50%;
-  background:var(--blood);
-  box-shadow:0 0 10px var(--blood), 0 0 22px var(--blood);
-  animation:blink 3.4s infinite;
-}
-.eyes span:nth-child(2){animation-delay:.15s;}
-@keyframes blink{
-  0%,92%,100%{transform:scaleY(1);}
-  95%{transform:scaleY(0.1);}
+#app {
+  position: relative;
+  width: 100%; height: 100vh; height: 100dvh;
+  overflow: hidden;
 }
 
-/* ---------- buttons ---------- */
-.btn{
-  font-family:'Special Elite',monospace;
-  background:linear-gradient(180deg,#12241a,#0a1510);
-  color:var(--acid);
-  border:2px solid var(--acid-dim);
-  padding:14px 34px;
-  font-size:16px;
-  letter-spacing:2px;
-  cursor:pointer;
-  border-radius:2px;
-  transition:box-shadow .2s, transform .1s, border-color .2s;
-  margin-top:10px;
+/* ---------- BACKGROUND LAYER & PHOTOREALISTIC LIGHTING ---------- */
+#bgLayer {
+  position: absolute; inset: 0; z-index: 0;
+  background: 
+    radial-gradient(circle at 50% 30%, #0d211a 0%, #050b08 60%, #010302 100%);
 }
-.btn:hover{
-  border-color:var(--acid);
-  box-shadow:0 0 14px rgba(73,255,122,0.55);
-}
-.btn:active{transform:scale(0.97);}
-.btn.danger{color:var(--blood);border-color:#5c1420;}
-.btn.danger:hover{border-color:var(--blood);box-shadow:0 0 14px rgba(209,38,58,0.55);}
-.btn.ghostBtn{background:transparent;color:var(--bone-dim);border-color:#2a352c;}
-.btn.ghostBtn:hover{color:var(--hazard);border-color:var(--hazard);box-shadow:0 0 10px rgba(232,197,71,0.35);}
-.btn.small{padding:8px 16px;font-size:12px;letter-spacing:1px;}
-.btnRow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
 
-.icon-toggle{
-  position:absolute;top:16px;right:16px;z-index:30;
-  background:rgba(10,20,14,0.6);border:1px solid var(--acid-dim);
-  color:var(--acid);width:38px;height:38px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;
+/* Wall lab texture overlay */
+.lab-wall {
+  position: absolute; inset: 0;
+  background: 
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.6;
 }
+
+/* Realistic volumetric fog layers */
+.fog {
+  position: absolute; left: -50%; width: 200%; height: 100%; bottom: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(0, 255, 102, 0.08) 0%, rgba(5, 15, 10, 0.4) 50%, transparent 80%);
+  filter: blur(40px);
+  animation: drift 22s linear infinite;
+  pointer-events: none;
+}
+.fog.f2 {
+  top: 0; bottom: auto;
+  background: radial-gradient(ellipse at 30% 20%, rgba(0, 150, 255, 0.05) 0%, rgba(2, 6, 10, 0.5) 60%, transparent 80%);
+  animation-duration: 35s; animation-direction: reverse;
+}
+@keyframes drift {
+  0% { transform: translateX(-10%) rotate(0deg); }
+  50% { transform: translateX(10%) rotate(1deg); }
+  100% { transform: translateX(-10%) rotate(0deg); }
+}
+
+#flicker {
+  position: absolute; inset: 0; z-index: 5; background: #000; opacity: 0;
+  pointer-events: none;
+}
+.vignette {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.92) 100%);
+}
+
+/* Scanlines CRT effect for cinematic sci-fi feel */
+.scanlines {
+  position: absolute; inset: 0; z-index: 6; pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+  background-size: 100% 4px;
+  opacity: 0.7;
+}
+
+/* ---------- SCENES ---------- */
+.scene {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 5vw;
+  opacity: 0; visibility: hidden;
+  transition: opacity .6s cubic-bezier(0.16, 1, 0.3, 1), transform .6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.98);
+  text-align: center;
+  overflow-y: auto;
+}
+.scene.active { opacity: 1; visibility: visible; transform: scale(1); }
+
+/* ---------- TYPOGRAPHY & HEADERS ---------- */
+h1.title {
+  font-family: 'Creepster', cursive;
+  color: var(--acid);
+  font-size: clamp(34px, 8vw, 68px);
+  line-height: 1.1;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px var(--acid-glow), 0 0 30px var(--acid-glow), 0 0 60px rgba(0, 255, 102, 0.2);
+  margin: 0 0 10px 0;
+  animation: flick 5s infinite;
+}
+@keyframes flick {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; filter: drop-shadow(0 0 15px var(--acid)); }
+  19%, 24%, 55% { opacity: 0.3; filter: none; }
+}
+
+.subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--hazard);
+  font-size: clamp(12px, 2.5vw, 15px);
+  letter-spacing: 4px;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--hazard);
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+p.lore {
+  font-size: clamp(14px, 3.2vw, 17px);
+  line-height: 1.8;
+  color: var(--bone);
+  max-width: 580px;
+  margin: 0 auto 14px auto;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Creepy Bio Eye Indicator */
+.eyes {
+  width: 90px; height: 30px; margin: 10px auto 20px auto;
+  display: flex; justify-content: center; gap: 20px;
+}
+.eyes span {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff8899 0%, var(--blood) 60%, #500 100%);
+  box-shadow: 0 0 12px var(--blood), 0 0 25px var(--blood-glow);
+  animation: blink 4s infinite;
+}
+.eyes span:nth-child(2) { animation-delay: .2s; }
+@keyframes blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.05); }
+}
+
+/* ---------- HIGH-TECH BUTTONS ---------- */
+.btn {
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  background: linear-gradient(135deg, #14281f 0%, #09120e 100%);
+  color: var(--acid);
+  border: 1px solid var(--acid);
+  padding: 14px 38px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  transition: all .25s ease;
+  margin-top: 10px;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1);
+}
+.btn:hover {
+  background: var(--acid);
+  color: #000;
+  box-shadow: 0 0 25px var(--acid-glow);
+  transform: translateY(-2px);
+}
+.btn:active { transform: translateY(1px); }
+.btn.danger {
+  color: var(--blood); border-color: var(--blood);
+  background: linear-gradient(135deg, #2b0b10 0%, #120305 100%);
+}
+.btn.danger:hover { background: var(--blood); color: #fff; box-shadow: 0 0 25px var(--blood-glow); }
+.btn.ghostBtn { background: transparent; color: var(--bone-dim); border-color: #2c4236; }
+.btn.ghostBtn:hover { color: var(--hazard); border-color: var(--hazard); box-shadow: 0 0 15px rgba(255,183,0,0.3); }
+.btn.small { padding: 8px 20px; font-size: 13px; }
+.btnRow { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+
+.icon-toggle {
+  position: absolute; top: 20px; right: 20px; z-index: 30;
+  background: rgba(10,20,15,0.8); border: 1px solid var(--acid-dim);
+  color: var(--acid); width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s;
+}
+.icon-toggle:hover { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
 
 /* ---------- GAME SCENE ---------- */
-#gameScene{justify-content:flex-start;padding-top:4vh;}
-.hud{
-  width:100%;max-width:640px;
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:10px;
-  font-family:'VT323',monospace;
-  color:var(--acid);
+#gameScene { justify-content: flex-start; padding-top: 2vh; }
+.hud {
+  width: 100%; max-width: 680px;
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  color: var(--acid);
 }
-.hud .doorCount{font-size:20px;letter-spacing:1px;}
-.vials{display:flex;gap:6px;}
-.vial{
-  width:14px;height:22px;border:2px solid var(--blood);border-radius:2px 2px 5px 5px;
-  background:linear-gradient(180deg, var(--blood) 0%, var(--blood) 100%);
-  box-shadow:0 0 6px rgba(209,38,58,0.6);
-  transition:all .3s;
-}
-.vial.used{background:transparent;box-shadow:none;opacity:0.25;}
+.hud .doorCount { font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 8px var(--acid-glow); }
 
-.progressBar{
-  width:100%;max-width:640px;height:6px;background:#0e1a12;border:1px solid var(--acid-dim);
-  margin-bottom:18px;position:relative;overflow:hidden;
+/* Realistic Chemical Vials */
+.vials { display: flex; gap: 10px; }
+.vial {
+  width: 16px; height: 32px;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: 3px 3px 8px 8px;
+  background: rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,0,0,0.8);
 }
-.progressFill{
-  height:100%;background:linear-gradient(90deg,var(--acid-dim),var(--acid));
-  width:0%;transition:width .4s ease;
+.vial::before {
+  content:''; position: absolute; bottom: 1px; left: 1px; right: 1px; top: 30%;
+  background: linear-gradient(180deg, #ff5566 0%, var(--blood) 100%);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 0 10px var(--blood);
+  transition: all 0.4s ease;
 }
+.vial.used::before { top: 90%; opacity: 0.15; }
 
-.stage{
-  position:relative;width:100%;max-width:640px;height:28vh;min-height:150px;
-  margin-bottom:14px;
+.progressBar {
+  width: 100%; max-width: 680px; height: 8px; background: rgba(5,15,10,0.8);
+  border: 1px solid var(--panel-border);
+  margin-bottom: 14px; position: relative; border-radius: 4px; overflow: hidden;
 }
-/* ghost */
-.ghost{
-  position:absolute;bottom:6%;
-  right:88%;
-  width:90px;height:110px;
-  transition:right 1.1s cubic-bezier(.6,-0.1,.4,1.3), transform .3s;
-  filter:drop-shadow(0 0 10px rgba(155,107,255,0.6));
-  z-index:2;
-}
-.ghost.approach1{right:64%;}
-.ghost.approach2{right:40%;}
-.ghost.approach3{right:16%;}
-.ghost.lunge{right:-4% !important; transform:scale(1.3); transition:right .35s ease-in, transform .35s;}
-.ghost svg{width:100%;height:100%;}
-
-/* door */
-.doorWrap{
-  position:absolute;left:8%;bottom:0;width:110px;height:100%;
-  perspective:600px;
-}
-.door{
-  position:absolute;bottom:0;left:0;width:100%;height:78%;
-  background:linear-gradient(180deg,#1c130c,#0d0906);
-  border:4px solid #060403;
-  border-radius:4px 4px 0 0;
-  box-shadow:0 0 18px rgba(73,255,122,0.15), inset 0 0 20px rgba(0,0,0,0.7);
-  transform-origin:left center;
-  transition:transform .8s ease;
-}
-.door.open{transform:rotateY(-108deg);}
-.doorGlow{
-  position:absolute;bottom:0;left:4px;width:calc(100% - 8px);height:78%;
-  background:radial-gradient(ellipse at 50% 50%, rgba(73,255,122,0.5), transparent 70%);
-  opacity:0;transition:opacity .5s;
-}
-.doorGlow.show{opacity:1;}
-.doorKnob{
-  position:absolute;right:10px;top:45%;width:8px;height:8px;border-radius:50%;
-  background:var(--hazard);box-shadow:0 0 6px var(--hazard);
+.progressFill {
+  height: 100%; background: linear-gradient(90deg, var(--acid-dim), var(--acid));
+  box-shadow: 0 0 10px var(--acid);
+  width: 0%; transition: width .5s ease;
 }
 
-.panel{
-  width:100%;max-width:640px;
-  background:linear-gradient(180deg,rgba(12,22,17,0.92),rgba(6,12,9,0.95));
-  border:1px solid var(--acid-dim);
-  border-radius:4px;
-  padding:20px 22px;
-  box-shadow:0 0 24px rgba(0,0,0,0.6);
-}
-.qLabel{
-  font-family:'VT323',monospace;color:var(--hazard);font-size:14px;letter-spacing:2px;margin-bottom:6px;
-}
-.qText{
-  font-size:clamp(14px,3.6vw,18px);line-height:1.7;color:var(--bone);margin-bottom:16px;min-height:60px;
-}
-.optionsGrid{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-}
-@media (max-width:480px){
-  .optionsGrid{grid-template-columns:1fr;}
-}
-.optionBtn{
-  font-family:'VT323',monospace;font-size:16px;letter-spacing:0.5px;
-  background:#050a07;border:2px solid var(--acid-dim);color:var(--bone);
-  padding:12px 10px;border-radius:3px;cursor:pointer;text-align:left;
-  transition:border-color .15s, background .15s, transform .1s;
-}
-.optionBtn:hover:not(:disabled){border-color:var(--acid);background:#0a160f;}
-.optionBtn:active:not(:disabled){transform:scale(0.98);}
-.optionBtn:disabled{cursor:default;}
-.optionBtn.isCorrect{border-color:var(--acid);background:rgba(73,255,122,0.15);color:var(--acid);}
-.optionBtn.isWrong{border-color:var(--blood);background:rgba(209,38,58,0.15);color:var(--blood);}
-.optionLetter{color:var(--hazard);margin-right:8px;}
-
-.feedback{
-  margin-top:12px;min-height:22px;font-size:14px;letter-spacing:1px;
-}
-.feedback.correct{color:var(--acid);}
-.feedback.wrong{color:var(--blood);}
-
-.shake{animation:shakeAnim .4s;}
-@keyframes shakeAnim{
-  0%,100%{transform:translateX(0);}
-  20%{transform:translateX(-8px);}
-  40%{transform:translateX(8px);}
-  60%{transform:translateX(-6px);}
-  80%{transform:translateX(6px);}
-}
-.flashRed{animation:flashRedAnim .4s;}
-@keyframes flashRedAnim{
-  0%{background:rgba(209,38,58,0.25);}
-  100%{background:transparent;}
+/* 3D Stage Environment */
+.stage {
+  position: relative; width: 100%; max-width: 680px; height: 30vh; min-height: 180px;
+  margin-bottom: 12px;
+  background: linear-gradient(180deg, rgba(3,8,6,0.9) 0%, rgba(10,20,15,0.6) 100%);
+  border: 1px solid rgba(0,255,102,0.15);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px #000;
 }
 
-/* end screens */
-#gameOverScene h1.title{color:var(--blood);text-shadow:0 0 6px var(--blood),0 0 26px rgba(209,38,58,0.6);}
-#winScene h1.title{color:var(--acid);}
-
-.nameEntry{display:flex;gap:8px;margin:14px 0;flex-wrap:wrap;justify-content:center;}
-#nameInput{
-  background:#050a07;border:2px solid var(--acid-dim);color:var(--acid);
-  font-family:'VT323',monospace;font-size:18px;padding:10px 12px;border-radius:2px;
-  outline:none;letter-spacing:1px;width:220px;max-width:60vw;
+/* Photorealistic Lab Horror Monster */
+.ghost {
+  position: absolute; bottom: -5%;
+  right: 88%;
+  width: 130px; height: 160px;
+  transition: right 1.2s cubic-bezier(.25,1,.5,1), transform .4s;
+  filter: drop-shadow(0 0 15px rgba(0,0,0,0.9));
+  z-index: 2;
 }
-#nameInput:focus{border-color:var(--acid);box-shadow:0 0 10px rgba(73,255,122,0.4);}
-.saveNote{font-size:11px;color:var(--bone-dim);max-width:400px;margin:0 auto 6px auto;}
-
-/* leaderboard */
-.lbWrap{
-  width:100%;max-width:480px;
-  background:linear-gradient(180deg,rgba(12,22,17,0.9),rgba(6,12,9,0.95));
-  border:1px solid var(--acid-dim);border-radius:4px;
-  padding:14px 16px;margin:14px 0;max-height:44vh;overflow-y:auto;
+.ghost.approach1 { right: 62%; }
+.ghost.approach2 { right: 38%; }
+.ghost.approach3 { right: 15%; }
+.ghost.lunge {
+  right: -2% !important; transform: scale(1.45);
+  transition: right .3s ease-in, transform .3s;
 }
-.lbRow{
-  display:grid;grid-template-columns:28px 1fr 60px 70px;gap:8px;align-items:center;
-  padding:7px 4px;border-bottom:1px solid #142018;font-family:'VT323',monospace;font-size:16px;
-}
-.lbRow.head{color:var(--hazard);font-size:12px;letter-spacing:1px;border-bottom:1px solid var(--acid-dim);}
-.lbRow .rank{color:var(--hazard);}
-.lbRow .lbName{color:var(--bone);text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lbRow .lbWrong{color:var(--blood);text-align:center;}
-.lbRow .lbTime{color:var(--acid);text-align:center;}
-.lbEmpty{color:var(--bone-dim);font-size:13px;padding:14px 0;}
 
-@media (max-width:480px){
-  .stage{height:26vh;}
-  .doorWrap{width:80px;}
-  .ghost{width:64px;height:78px;}
-  .panel{padding:16px;}
+/* Realistic Metal Door */
+.doorWrap {
+  position: absolute; left: 6%; bottom: 0; width: 120px; height: 90%;
+  perspective: 800px;
+}
+.door {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(90deg, #1c262b 0%, #2a3840 50%, #151d21 100%);
+  border: 3px solid #0d1317;
+  border-top-left-radius: 6px; border-top-right-radius: 6px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.9);
+  transform-origin: left center;
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.door::before {
+  content: ''; position: absolute; width: 80%; height: 70%;
+  border: 2px solid rgba(255,255,255,0.05);
+  background: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,0,0,0.3) 8px, rgba(0,0,0,0.3) 10px);
+}
+.door.open { transform: rotateY(-115deg); }
+.doorGlow {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(0, 255, 102, 0.6), transparent 70%);
+  opacity: 0; transition: opacity .6s;
+}
+.doorGlow.show { opacity: 1; }
+.doorKnob {
+  position: absolute; right: 12px; top: 50%; width: 10px; height: 24px;
+  background: linear-gradient(180deg, #e6b800, #806600);
+  border-radius: 2px; box-shadow: 0 0 8px var(--hazard);
+}
+
+/* Tactical Interface Panel */
+.panel {
+  width: 100%; max-width: 680px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 22px 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,255,102,0.03);
+  backdrop-filter: blur(8px);
+}
+.qLabel {
+  font-family: 'Share Tech Mono', monospace; color: var(--hazard); font-size: 14px;
+  letter-spacing: 2px; margin-bottom: 8px; text-transform: uppercase; text-align: left;
+}
+.qText {
+  font-size: clamp(15px, 3.6vw, 19px); line-height: 1.6; color: var(--bone);
+  margin-bottom: 20px; min-height: 56px; text-align: left; font-weight: 600;
+}
+.optionsGrid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+@media (max-width: 520px) {
+  .optionsGrid { grid-template-columns: 1fr; }
+}
+.optionBtn {
+  font-family: 'Chakra Petch', sans-serif; font-size: 15px; font-weight: 600;
+  background: rgba(4, 10, 8, 0.7); border: 1px solid #1a3328; color: var(--bone);
+  padding: 14px 14px; border-radius: 4px; cursor: pointer; text-align: left;
+  transition: all .2s ease;
+  display: flex; align-items: center;
+}
+.optionBtn:hover:not(:disabled) {
+  border-color: var(--acid); background: rgba(0, 255, 102, 0.08);
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.2); transform: translateX(2px);
+}
+.optionBtn:active:not(:disabled) { transform: scale(0.98); }
+.optionBtn:disabled { cursor: default; }
+.optionBtn.isCorrect {
+  border-color: var(--acid); background: rgba(0, 255, 102, 0.25); color: #fff;
+  box-shadow: 0 0 15px var(--acid-glow);
+}
+.optionBtn.isWrong {
+  border-color: var(--blood); background: rgba(255, 30, 56, 0.25); color: #fff;
+  box-shadow: 0 0 15px var(--blood-glow);
+}
+.optionLetter {
+  color: var(--hazard); margin-right: 10px; font-family: 'Share Tech Mono', monospace; font-size: 16px;
+}
+
+.feedback {
+  margin-top: 14px; min-height: 24px; font-size: 15px; font-weight: 700; letter-spacing: 1px;
+}
+.feedback.correct { color: var(--acid); text-shadow: 0 0 8px var(--acid-glow); }
+.feedback.wrong { color: var(--blood); text-shadow: 0 0 8px var(--blood-glow); }
+
+.shake { animation: shakeAnim .45s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shakeAnim {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+.flashRed { animation: flashRedAnim .4s ease-out; }
+@keyframes flashRedAnim {
+  0% { background: rgba(255, 30, 56, 0.35); }
+  100% { background: var(--panel-bg); }
+}
+
+/* END SCREENS */
+#gameOverScene h1.title { color: var(--blood); text-shadow: 0 0 15px var(--blood-glow), 0 0 40px var(--blood-glow); }
+#winScene h1.title { color: var(--acid); }
+
+.nameEntry { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; justify-content: center; }
+#nameInput {
+  background: rgba(2, 6, 4, 0.8); border: 1px solid var(--acid-dim); color: var(--acid);
+  font-family: 'Share Tech Mono', monospace; font-size: 18px; padding: 10px 14px; border-radius: 4px;
+  outline: none; letter-spacing: 1px; width: 240px; max-width: 70vw;
+  transition: all 0.3s;
+}
+#nameInput:focus { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
+.saveNote { font-size: 12px; color: var(--bone-dim); max-width: 420px; margin: 0 auto 8px auto; }
+
+/* LEADERBOARD */
+.lbWrap {
+  width: 100%; max-width: 520px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border); border-radius: 6px;
+  padding: 16px; margin: 16px 0; max-height: 48vh; overflow-y: auto;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+}
+.lbRow {
+  display: grid; grid-template-columns: 32px 1fr 60px 80px; gap: 10px; align-items: center;
+  padding: 10px 6px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-family: 'Share Tech Mono', monospace; font-size: 16px;
+}
+.lbRow.head { color: var(--hazard); font-size: 13px; letter-spacing: 1px; border-bottom: 1px solid var(--acid-dim); }
+.lbRow .rank { color: var(--hazard); font-weight: bold; }
+.lbRow .lbName { color: var(--bone); text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lbRow .lbWrong { color: var(--blood); text-align: center; }
+.lbRow .lbTime { color: var(--acid); text-align: center; }
+.lbEmpty { color: var(--bone-dim); font-size: 14px; padding: 20px 0; }
+
+@media (max-width: 480px) {
+  .stage { height: 26vh; }
+  .doorWrap { width: 95px; }
+  .ghost { width: 95px; height: 120px; }
+  .panel { padding: 16px; }
 }
 </style>
 </head>
 <body>
 <div id="app">
   <div id="bgLayer">
+    <div class="lab-wall"></div>
     <div class="fog"></div>
     <div class="fog f2"></div>
-    <svg id="trees" viewBox="0 0 1000 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <g fill="#04100a">
-        <path d="M40 220 L55 120 L45 118 L60 60 L50 58 L65 10 L80 58 L70 60 L85 118 L75 120 L90 220 Z"/>
-        <path d="M150 220 L160 140 L152 138 L165 90 L157 88 L170 40 L183 88 L175 90 L188 138 L180 140 L190 220 Z"/>
-        <path d="M880 220 L895 130 L885 128 L900 70 L890 68 L905 20 L920 68 L910 70 L925 128 L915 130 L930 220 Z"/>
-        <path d="M960 220 L968 150 L962 148 L972 110 L966 108 L976 70 L986 108 L980 110 L990 148 L984 150 L992 220 Z"/>
-        <path d="M0 220 L0 160 Q30 150 20 120 Q45 130 40 90 Q60 100 55 60 L70 60 Q68 100 88 95 Q80 130 105 125 Q95 155 120 160 L120 220 Z" opacity="0.85"/>
-      </g>
-    </svg>
     <div class="vignette"></div>
-    <div class="grain"></div>
+    <div class="scanlines"></div>
     <div id="flicker"></div>
   </div>
 
@@ -353,37 +432,36 @@ p.lore{
   <!-- START SCENE -->
   <section class="scene active" id="startScene">
     <h1 class="title">เอาตัวรอดใน<br>แลปปริศนา</h1>
-    <div class="subtitle">SURVIVE THE HAUNTED LABORATORY</div>
+    <div class="subtitle">BIO-HAZARD ESCAPE PROTOCOL</div>
     <div class="eyes"><span></span><span></span></div>
-    <p class="lore">ตอบคำถามให้ถูก...ก่อนที่มันจะตามทัน</p>
+    <p class="lore">ไขรหัสชีววิทยาเพื่อปลดล็อกประตู... ก่อนสิ่งทดลองในความมืดจะเข้าถึงตัว</p>
     <div class="btnRow">
-      <button class="btn" id="btnToStory">เริ่มเกม</button>
-      <button class="btn ghostBtn" id="btnShowLB">🏆 ตารางอันดับ</button>
+      <button class="btn" id="btnToStory">เริ่มภารกิจ</button>
+      <button class="btn ghostBtn" id="btnShowLB">🏆 ตารางบันทึกการรอดชีวิต</button>
     </div>
   </section>
 
   <!-- STORY SCENE -->
   <section class="scene" id="storyScene">
-    <h1 class="title" style="font-size:clamp(22px,5vw,34px)">เรื่องราว...</h1>
+    <h1 class="title" style="font-size:clamp(26px,5vw,38px)">บันทึกเหตุการณ์...</h1>
     <p class="lore">
-      ดึกดื่นคืนหนึ่ง คุณตื่นขึ้นมาในห้องแล็บใต้ดินที่ไม่มีใครรู้จัก
-      หลอดไฟกระพริบ กลิ่นสารเคมีคละคลุ้งไปทั่วทางเดิน
+      คุณตื่นขึ้นมาในศูนย์วิจัยชีววิทยาใต้ดินที่ถูกสั่งปิด หลอดไฟเรโซแนนซ์กระพริบติดๆ ดับๆ
+      ไอน้ำเคมีเข้มข้นลอยปกคลุมพื้นห้อง ทางออกเดียวของคุณคือประตูแรงดันเหล็กกล้า 14 บาน
     </p>
     <p class="lore">
-      ประตูทุกบานถูกล็อกด้วยระบบปริศนาโบราณ มีเพียงการเลือกคำตอบ
-      เกี่ยวกับสรีรวิทยาของพืชให้ถูกต้องเท่านั้น ที่จะปลดล็อกทางออกไปทีละบาน
+      ประตูแต่ละบานถูกควบคุมด้วยระบบความปลอดภัยสรีรวิทยาของพืช คุณต้องตอบคำถามเพื่อปลดล็อกสลัก
     </p>
     <p class="lore" style="color:var(--hazard)">
-      แต่คุณไม่ได้อยู่คนเดียว... มีบางสิ่งเดินตามคุณอยู่ในความมืด<br>
-      ตอบผิดครบ <strong>4 ครั้ง</strong> เมื่อไหร่ มันจะจับคุณกิน
+      เตือนภัย: สิ่งทดลองสปีชีส์ X หลุดออกจากหลอดแก้ว...<br>
+      ตอบผิดพลาดเกิน <strong>4 ครั้ง</strong> ระบบกลไกจะล้มเหลวและมันจะสังหารคุณทันที
     </p>
-    <button class="btn" id="btnToGame">เข้าสู่แล็บ</button>
+    <button class="btn" id="btnToGame">เข้าสู่พื้นที่ปลดล็อก</button>
   </section>
 
   <!-- GAME SCENE -->
   <section class="scene" id="gameScene">
     <div class="hud">
-      <div class="doorCount">ประตูที่ <span id="doorNum">1</span> / <span id="doorTotal">14</span></div>
+      <div class="doorCount">SEC_DOOR: <span id="doorNum">01</span> / <span id="doorTotal">14</span></div>
       <div class="vials" id="vials"></div>
     </div>
     <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
@@ -395,22 +473,47 @@ p.lore{
           <div class="doorKnob"></div>
         </div>
       </div>
+      
+      <!-- Realistic Photorealistic Vector Monster -->
       <div class="ghost" id="ghost">
-        <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-          <path d="M50 5 C25 5 10 25 10 55 L10 105 L20 95 L30 108 L40 95 L50 108 L60 95 L70 108 L80 95 L90 105 L90 55 C90 25 75 5 50 5 Z"
-                fill="#e9e4f7" opacity="0.9"/>
-          <ellipse cx="35" cy="52" rx="7" ry="9" fill="#1a0d2e"/>
-          <ellipse cx="65" cy="52" rx="7" ry="9" fill="#1a0d2e"/>
-          <ellipse cx="35" cy="52" rx="3" ry="4" fill="#9b6bff"/>
-          <ellipse cx="65" cy="52" rx="3" ry="4" fill="#9b6bff"/>
-          <path d="M40 72 Q50 82 60 72" stroke="#1a0d2e" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bodyGrad" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#2a3832"/>
+              <stop offset="50%" stop-color="#0e1713"/>
+              <stop offset="100%" stop-color="#030604"/>
+            </radialGradient>
+            <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ff6677"/>
+              <stop offset="40%" stop-color="#ff0022"/>
+              <stop offset="100%" stop-color="#660000"/>
+            </radialGradient>
+            <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <!-- Shadow Body -->
+          <path d="M100 20 C50 20 20 60 15 120 C10 170 30 220 40 230 C50 210 65 215 80 235 C95 210 105 210 120 235 C135 215 150 210 160 230 C170 220 190 170 185 120 C180 60 150 20 100 20 Z" fill="url(#bodyGrad)" opacity="0.95"/>
+          <!-- Organic Tendrils -->
+          <path d="M30 140 Q 10 180 5 220" stroke="#12211a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M170 140 Q 190 180 195 220" stroke="#12211a" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Glowing Fiendish Eyes -->
+          <circle cx="70" cy="95" r="12" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
+          <circle cx="130" cy="95" r="12" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
+          <circle cx="72" cy="93" r="3" fill="#ffffff"/>
+          <circle cx="132" cy="93" r="3" fill="#ffffff"/>
+          <circle cx="100" cy="75" r="6" fill="url(#eyeGlow)" filter="url(#glowEffect)"/>
+          <!-- Monster Jaw & Teeth -->
+          <path d="M65 145 Q100 180 135 145 Q100 155 65 145 Z" fill="#050806"/>
+          <path d="M70 146 L75 155 L80 147 L87 157 L93 148 L100 159 L107 148 L114 157 L120 147 L126 155 L130 146" stroke="#d3e0d8" stroke-width="2.5" fill="none"/>
         </svg>
       </div>
     </div>
 
     <div class="panel">
-      <div class="qLabel">คำถามข้อที่ <span id="qIndex">1</span></div>
-      <div class="qText" id="qText">กำลังโหลด...</div>
+      <div class="qLabel">SECURITY VERIFICATION // QUESTION <span id="qIndex">01</span></div>
+      <div class="qText" id="qText">ระบบกำลังดึงข้อมูลคำถาม...</div>
       <div class="optionsGrid" id="optionsGrid"></div>
       <div class="feedback" id="feedback"></div>
     </div>
@@ -418,40 +521,40 @@ p.lore{
 
   <!-- GAME OVER SCENE -->
   <section class="scene" id="gameOverScene">
-    <h1 class="title">มันจับคุณได้แล้ว...</h1>
-    <p class="lore">เสียงกรีดร้องดังก้องไปทั่วห้องแล็บ ก่อนทุกอย่างจะเงียบสนิท</p>
-    <p class="lore" style="color:var(--hazard)">คุณตอบผิดไป <span id="failCount">4</span> ครั้ง จากประตูที่ <span id="failDoor">1</span></p>
+    <h1 class="title">คุณตกเป็นอาหารของมัน</h1>
+    <p class="lore">สิ่งทดลองกักขังเข้าถึงตัวคุณ... เสียงสัญญาณเตือนภัยดังล้มเหลวไปพร้อมกับลมหายใจสุดท้าย</p>
+    <p class="lore" style="color:var(--blood)">ผิดพลาดสะสม <span id="failCount">4</span> ครั้ง | หยุดอยู่ที่ประตูบานที่ <span id="failDoor">1</span></p>
     <div class="btnRow">
-      <button class="btn danger" id="btnRetry">ลองอีกครั้ง</button>
-      <button class="btn ghostBtn" id="btnLBFromOver">🏆 ตารางอันดับ</button>
+      <button class="btn danger" id="btnRetry">เริ่มต้นใหม่</button>
+      <button class="btn ghostBtn" id="btnLBFromOver">🏆 ตารางผู้รอดชีวิต</button>
     </div>
   </section>
 
   <!-- WIN SCENE -->
   <section class="scene" id="winScene">
-    <h1 class="title">คุณรอดออกมาได้!</h1>
-    <p class="lore">แสงอาทิตย์ยามเช้าสาดส่องผ่านประตูบานสุดท้าย คุณหนีออกจากแล็บปริศนาได้สำเร็จ</p>
-    <p class="lore" style="color:var(--acid)">ตอบผิดทั้งหมด <span id="winFails">0</span> ครั้ง | เวลา <span id="winTime">0:00</span></p>
+    <h1 class="title">หลบหนีสำเร็จ!</h1>
+    <p class="lore">ประตูแรงดันบานสุดท้ายเปิดออก แสงสว่างภายนอกส่องเข้ามา คุณสามารถรอดชีวิตออกจากแล็บมรณะได้สำเร็จ</p>
+    <p class="lore" style="color:var(--acid)">ข้อผิดพลาดรวม: <span id="winFails">0</span> ครั้ง | เวลาหลบหนี: <span id="winTime">0:00</span></p>
     <div id="nameEntryBlock">
-      <p class="saveNote">บันทึกชื่อของคุณลงตารางอันดับ (ชื่อและผลคะแนนจะแสดงให้ผู้เล่นคนอื่นเห็นด้วย)</p>
+      <p class="saveNote">บันทึกประวัติการเอาชีวิตรอดของคุณลงในระบบศูนย์วิจัย</p>
       <div class="nameEntry">
-        <input type="text" id="nameInput" placeholder="ใส่ชื่อของคุณ..." maxlength="16">
-        <button class="btn small" id="btnSaveScore">บันทึกคะแนน</button>
+        <input type="text" id="nameInput" placeholder="กรอกชื่อโค้ดเนม..." maxlength="16">
+        <button class="btn small" id="btnSaveScore">บันทึกข้อมูล</button>
       </div>
     </div>
     <div class="btnRow">
-      <button class="btn" id="btnPlayAgain">เล่นอีกครั้ง</button>
-      <button class="btn ghostBtn" id="btnLBFromWin">🏆 ดูตารางอันดับ</button>
+      <button class="btn" id="btnPlayAgain">เล่นใหม่อีกครั้ง</button>
+      <button class="btn ghostBtn" id="btnLBFromWin">🏆 ตารางบันทึกการรอดชีวิต</button>
     </div>
   </section>
 
   <!-- LEADERBOARD SCENE -->
   <section class="scene" id="lbScene">
-    <h1 class="title" style="font-size:clamp(22px,5vw,32px)">🏆 ผู้รอดชีวิต</h1>
+    <h1 class="title" style="font-size:clamp(24px,5vw,36px)">🏆 บันทึกผู้รอดชีวิต</h1>
     <div class="lbWrap" id="lbList">
-      <div class="lbEmpty">กำลังโหลด...</div>
+      <div class="lbEmpty">กำลังโหลดข้อมูลจากเซิร์ฟเวอร์...</div>
     </div>
-    <button class="btn" id="btnLBBack">กลับหน้าแรก</button>
+    <button class="btn" id="btnLBBack">กลับหน้าหลัก</button>
   </section>
 </div>
 
@@ -493,7 +596,7 @@ function buildOptions(correctAns){
 /* ================= STATE ================= */
 let state = { doorIndex:0, wrong:0, soundOn:true, startTime:0, currentOptions:[] };
 
-/* ================= AUDIO ENGINE (procedural, no external files) ================= */
+/* ================= AUDIO ENGINE (Procedural Audio Synthesizer) ================= */
 let actx = null;
 function ensureAudio(){
   if(!actx){
@@ -505,8 +608,7 @@ function ensureAudio(){
 }
 let ambientNodes = [];
 function startAmbient(){
-  if(!state.soundOn) return;
-  // soft continuous wind bed instead of a harsh droning tone
+  if(!state.soundOn || !actx) return;
   const bufferSize = actx.sampleRate * 4;
   const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
   const data = buffer.getChannelData(0);
@@ -516,17 +618,18 @@ function startAmbient(){
   wind.loop = true;
   const windFilter = actx.createBiquadFilter();
   windFilter.type = 'lowpass';
-  windFilter.frequency.value = 220;
-  windFilter.Q.value = 0.7;
+  windFilter.frequency.value = 200;
+  windFilter.Q.value = 1.0;
   const windGain = actx.createGain();
-  windGain.gain.value = 0.018;
-  // slow gentle swell so the wind breathes instead of droning flat
+  windGain.gain.value = 0.02;
+
   const lfo = actx.createOscillator();
   lfo.frequency.value = 0.08;
   const lfoGain = actx.createGain();
-  lfoGain.gain.value = 0.01;
+  lfoGain.gain.value = 0.012;
   lfo.connect(lfoGain);
   lfoGain.connect(windGain.gain);
+
   wind.connect(windFilter);
   windFilter.connect(windGain);
   windGain.connect(actx.destination);
@@ -534,35 +637,38 @@ function startAmbient(){
   ambientNodes.push(wind, lfo);
   scheduleWhisper();
 }
+
 function scheduleWhisper(){
   if(!actx || !state.soundOn) return;
-  const delay = 6000 + Math.random()*9000;
+  const delay = 6000 + Math.random()*8000;
   setTimeout(()=>{
     if(state.soundOn && actx) playWhisper();
     scheduleWhisper();
   }, delay);
 }
+
 function playWhisper(){
-  // distant low creak, not a shrill hiss
-  const bufferSize = actx.sampleRate * 0.8;
+  const bufferSize = actx.sampleRate * 0.9;
   const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
   const data = buffer.getChannelData(0);
   for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
   const src = actx.createBufferSource();
   src.buffer = buffer;
   const filt = actx.createBiquadFilter();
-  filt.type = 'lowpass';
-  filt.frequency.value = 180 + Math.random()*120;
-  filt.Q.value = 1.2;
+  filt.type = 'bandpass';
+  filt.frequency.value = 250 + Math.random()*150;
+  filt.Q.value = 2.0;
   const gain = actx.createGain();
-  gain.gain.value = 0.035;
+  gain.gain.value = 0.04;
   src.connect(filt); filt.connect(gain); gain.connect(actx.destination);
   src.start();
 }
+
 function stopAmbient(){
   ambientNodes.forEach(n=>{ try{n.stop();}catch(e){} });
   ambientNodes = [];
 }
+
 function toneBurst(freq, dur, type='sine', vol=0.15, glideTo=null){
   if(!actx || !state.soundOn) return;
   const osc = actx.createOscillator();
@@ -576,51 +682,52 @@ function toneBurst(freq, dur, type='sine', vol=0.15, glideTo=null){
   osc.start();
   osc.stop(actx.currentTime + dur + 0.05);
 }
+
 function playCorrect(){
-  toneBurst(440,0.12,'sine',0.12,660);
-  setTimeout(()=>toneBurst(660,0.18,'sine',0.1,880),110);
+  toneBurst(520, 0.1, 'sine', 0.12, 780);
+  setTimeout(()=>toneBurst(780, 0.18, 'sine', 0.1, 1040), 90);
 }
 function playWrong(){
-  toneBurst(160,0.3,'triangle',0.1,80);
+  toneBurst(130, 0.35, 'sawtooth', 0.12, 60);
 }
 function playDoorCreak(){
   if(!actx || !state.soundOn) return;
   const osc = actx.createOscillator();
-  osc.type = 'square';
-  osc.frequency.setValueAtTime(120,actx.currentTime);
-  osc.frequency.linearRampToValueAtTime(60,actx.currentTime+0.7);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(90, actx.currentTime);
+  osc.frequency.linearRampToValueAtTime(40, actx.currentTime + 0.8);
   const g = actx.createGain();
-  g.gain.setValueAtTime(0.05,actx.currentTime);
-  g.gain.linearRampToValueAtTime(0.0001,actx.currentTime+0.7);
+  g.gain.setValueAtTime(0.04, actx.currentTime);
+  g.gain.linearRampToValueAtTime(0.0001, actx.currentTime + 0.8);
   osc.connect(g); g.connect(actx.destination);
-  osc.start(); osc.stop(actx.currentTime+0.75);
+  osc.start(); osc.stop(actx.currentTime + 0.85);
 }
 function playScream(){
   if(!actx || !state.soundOn) return;
   const osc = actx.createOscillator();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(520,actx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(70,actx.currentTime+0.9);
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(600, actx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(80, actx.currentTime + 1.0);
   const g = actx.createGain();
-  g.gain.setValueAtTime(0.12,actx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+1);
+  g.gain.setValueAtTime(0.15, actx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 1.0);
   osc.connect(g); g.connect(actx.destination);
-  osc.start(); osc.stop(actx.currentTime+1.05);
+  osc.start(); osc.stop(actx.currentTime + 1.05);
 }
 function playWinChime(){
-  [523,659,784,1046].forEach((f,i)=>{
-    setTimeout(()=>toneBurst(f,0.35,'triangle',0.1),i*140);
+  [523, 659, 784, 1046, 1318].forEach((f, i)=>{
+    setTimeout(()=>toneBurst(f, 0.4, 'triangle', 0.08), i*120);
   });
 }
 
-/* random flicker on background */
+/* Atmospheric visual flicker */
 setInterval(()=>{
   const fl = document.getElementById('flicker');
-  if(Math.random() < 0.08){
-    fl.style.opacity = 0.5 + Math.random()*0.4;
-    setTimeout(()=>{ fl.style.opacity = 0; }, 60 + Math.random()*90);
+  if(Math.random() < 0.07){
+    fl.style.opacity = 0.4 + Math.random()*0.4;
+    setTimeout(()=>{ fl.style.opacity = 0; }, 50 + Math.random()*80);
   }
-}, 900);
+}, 800);
 
 /* ================= SCENE NAV ================= */
 function showScene(id){
@@ -628,23 +735,10 @@ function showScene(id){
   document.getElementById(id).classList.add('active');
 }
 
-document.getElementById('btnToStory').addEventListener('click', ()=>{
-  ensureAudio();
-  showScene('storyScene');
-});
-document.getElementById('btnToGame').addEventListener('click', ()=>{
-  ensureAudio();
-  resetGame();
-  showScene('gameScene');
-});
-document.getElementById('btnRetry').addEventListener('click', ()=>{
-  resetGame();
-  showScene('gameScene');
-});
-document.getElementById('btnPlayAgain').addEventListener('click', ()=>{
-  resetGame();
-  showScene('gameScene');
-});
+document.getElementById('btnToStory').addEventListener('click', ()=>{ ensureAudio(); showScene('storyScene'); });
+document.getElementById('btnToGame').addEventListener('click', ()=>{ ensureAudio(); resetGame(); showScene('gameScene'); });
+document.getElementById('btnRetry').addEventListener('click', ()=>{ resetGame(); showScene('gameScene'); });
+document.getElementById('btnPlayAgain').addEventListener('click', ()=>{ resetGame(); showScene('gameScene'); });
 document.getElementById('btnShowLB').addEventListener('click', ()=>{ openLeaderboard(); });
 document.getElementById('btnLBFromOver').addEventListener('click', ()=>{ openLeaderboard(); });
 document.getElementById('btnLBFromWin').addEventListener('click', ()=>{ openLeaderboard(); });
@@ -653,8 +747,7 @@ document.getElementById('btnLBBack').addEventListener('click', ()=>{ showScene('
 document.getElementById('soundToggle').addEventListener('click', (e)=>{
   state.soundOn = !state.soundOn;
   e.target.textContent = state.soundOn ? '🔊' : '🔇';
-  if(state.soundOn){ ensureAudio(); }
-  else { stopAmbient(); }
+  if(state.soundOn){ ensureAudio(); } else { stopAmbient(); }
 });
 
 /* ================= GAME LOGIC ================= */
@@ -672,7 +765,7 @@ function resetGame(){
 function renderVials(){
   const wrap = document.getElementById('vials');
   wrap.innerHTML = '';
-  for(let i=0;i<MAX_WRONG;i++){
+  for(let i=0; i<MAX_WRONG; i++){
     const v = document.createElement('div');
     v.className = 'vial' + (i < state.wrong ? ' used' : '');
     wrap.appendChild(v);
@@ -692,8 +785,8 @@ const LETTERS = ['ก','ข','ค','ง'];
 function loadQuestion(){
   const idx = state.doorIndex;
   const total = QUESTIONS.length;
-  document.getElementById('doorNum').textContent = idx+1;
-  document.getElementById('qIndex').textContent = idx+1;
+  document.getElementById('doorNum').textContent = (idx+1 < 10 ? '0' : '') + (idx+1);
+  document.getElementById('qIndex').textContent = (idx+1 < 10 ? '0' : '') + (idx+1);
   document.getElementById('qText').textContent = QUESTIONS[idx].q;
   document.getElementById('progressFill').style.width = (idx/total*100)+'%';
   document.getElementById('feedback').textContent = '';
@@ -726,7 +819,7 @@ function selectOption(chosen, btnEl){
     btnEl.classList.add('isCorrect');
     playCorrect();
     playDoorCreak();
-    feedback.textContent = 'ถูกต้อง! ประตูเปิดออกแล้ว...';
+    feedback.textContent = 'ACCESS GRANTED // ยืนยันรหัสถูกต้อง...';
     feedback.className = 'feedback correct';
     document.getElementById('door').classList.add('open');
     document.getElementById('doorGlow').classList.add('show');
@@ -746,7 +839,7 @@ function selectOption(chosen, btnEl){
     state.wrong++;
     renderVials();
     updateGhost();
-    feedback.textContent = 'ผิด! ระวัง มันได้ยินคุณแล้ว...';
+    feedback.textContent = 'ACCESS DENIED // ระบบรักษาความปลอดภัยล้มเหลว!';
     feedback.className = 'feedback wrong';
     panel.classList.remove('flashRed'); void panel.offsetWidth; panel.classList.add('flashRed');
     document.getElementById('gameScene').classList.remove('shake'); void document.getElementById('gameScene').offsetWidth;
@@ -755,7 +848,10 @@ function selectOption(chosen, btnEl){
     if(state.wrong >= MAX_WRONG){
       setTimeout(()=>loseGame(), 900);
     } else {
-      setTimeout(()=>{ allBtns.forEach(b=>{ b.disabled=false; b.classList.remove('isWrong','isCorrect'); }); feedback.textContent=''; }, 1000);
+      setTimeout(()=>{
+        allBtns.forEach(b=>{ b.disabled=false; b.classList.remove('isWrong','isCorrect'); });
+        feedback.textContent='';
+      }, 1100);
     }
   }
 }
@@ -768,7 +864,7 @@ function loseGame(){
     document.getElementById('failCount').textContent = state.wrong;
     document.getElementById('failDoor').textContent = state.doorIndex+1;
     showScene('gameOverScene');
-  }, 500);
+  }, 450);
 }
 
 function formatTime(ms){
@@ -790,24 +886,33 @@ function winGame(){
   setTimeout(()=>showScene('winScene'), 400);
 }
 
-/* ================= LEADERBOARD (persistent shared storage) ================= */
+/* ================= LEADERBOARD ================= */
 const LB_KEY = 'lab_escape_leaderboard';
 
 async function loadLeaderboard(){
   try{
-    const res = await window.storage.get(LB_KEY, true);
-    if(!res || !res.value) return [];
-    const list = JSON.parse(res.value);
-    return Array.isArray(list) ? list : [];
-  } catch(e){
-    return [];
-  }
+    if(window.storage && window.storage.get){
+      const res = await window.storage.get(LB_KEY, true);
+      if(!res || !res.value) return [];
+      const list = JSON.parse(res.value);
+      return Array.isArray(list) ? list : [];
+    } else {
+      const item = localStorage.getItem(LB_KEY);
+      return item ? JSON.parse(item) : [];
+    }
+  } catch(e){ return []; }
 }
+
 async function saveLeaderboard(list){
   try{
-    await window.storage.set(LB_KEY, JSON.stringify(list), true);
-  } catch(e){ /* ignore storage errors */ }
+    if(window.storage && window.storage.set){
+      await window.storage.set(LB_KEY, JSON.stringify(list), true);
+    } else {
+      localStorage.setItem(LB_KEY, JSON.stringify(list));
+    }
+  } catch(e){}
 }
+
 function sortLB(list){
   return list.slice().sort((a,b)=>{
     if(a.wrong !== b.wrong) return a.wrong - b.wrong;
@@ -818,38 +923,40 @@ function sortLB(list){
 document.getElementById('btnSaveScore').addEventListener('click', async ()=>{
   const nameInput = document.getElementById('nameInput');
   let name = nameInput.value.trim();
-  if(!name) name = 'ผู้กล้าไม่ประสงค์ออกนาม';
+  if(!name) name = 'AGENT_UNKNOWN';
   name = name.slice(0,16);
   const btn = document.getElementById('btnSaveScore');
   btn.disabled = true;
-  btn.textContent = 'กำลังบันทึก...';
+  btn.textContent = 'บันทึก...';
   const list = await loadLeaderboard();
   list.push({ name, wrong: state.wrong, timeMs: lastWinTimeMs, date: new Date().toISOString() });
   const sorted = sortLB(list);
   await saveLeaderboard(sorted);
-  btn.textContent = 'บันทึกแล้ว!';
-  document.getElementById('nameEntryBlock').innerHTML = '<p class="saveNote">บันทึกคะแนนเรียบร้อย ขอบคุณที่ร่วมเอาตัวรอด!</p>';
+  btn.textContent = 'เรียบร้อย!';
+  document.getElementById('nameEntryBlock').innerHTML = '<p class="saveNote" style="color:var(--acid)">บันทึกข้อมูลเรียบร้อยแล้ว!</p>';
   renderLeaderboard(sorted);
 });
 
 function renderLeaderboard(list){
   const wrap = document.getElementById('lbList');
   if(!list || list.length === 0){
-    wrap.innerHTML = '<div class="lbEmpty">ยังไม่มีใครรอดออกจากแล็บ...เป็นคนแรกสิ!</div>';
+    wrap.innerHTML = '<div class="lbEmpty">ยังไม่มีประวัติการรอดชีวิตในระบบ...</div>';
     return;
   }
-  let html = '<div class="lbRow head"><div class="rank">#</div><div>ชื่อ</div><div>ผิด</div><div>เวลา</div></div>';
+  let html = '<div class="lbRow head"><div class="rank">#</div><div>AGENT</div><div>WRONG</div><div>TIME</div></div>';
   list.forEach((e,i)=>{
     html += '<div class="lbRow"><div class="rank">'+(i+1)+'</div><div class="lbName">'+escapeHtml(e.name)+'</div><div class="lbWrong">'+e.wrong+'</div><div class="lbTime">'+formatTime(e.timeMs)+'</div></div>';
   });
   wrap.innerHTML = html;
 }
+
 function escapeHtml(s){
   return s.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+
 async function openLeaderboard(){
   showScene('lbScene');
-  document.getElementById('lbList').innerHTML = '<div class="lbEmpty">กำลังโหลด...</div>';
+  document.getElementById('lbList').innerHTML = '<div class="lbEmpty">กำลังโหลดข้อมูล...</div>';
   const list = await loadLeaderboard();
   renderLeaderboard(sortLB(list));
 }
