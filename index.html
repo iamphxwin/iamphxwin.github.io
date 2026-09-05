@@ -695,7 +695,7 @@ p.lore {
     </div>
     <div class="btnRow">
       <button class="btn" id="btnPlayAgain">เล่นใหม่อีกครั้ง</button>
-      <button class="btn ghostBtn" id="btnLBFromWin">🏆 ตารางบันทึกการรอดชีวิต</button>
+      <button class="btn ghostBtn" id="btnLBFromWin">🏆 ตารางบันทึกผู้รอดชีวิต</button>
     </div>
   </section>
 
@@ -1176,6 +1176,43 @@ function loseGame(){
   const ghost = document.getElementById('ghost');
   ghost.classList.add('lunge');
   playScream();
+  
+  // 1. ชุดข้อความหัวเรื่อง (Title) สำหรับสุ่มแสดง
+  const gameOverTitles = [
+    "SYSTEM FAILURE — LIFE SIGNAL LOST",
+    "CONNECTION TERMINATED",
+    "CRITICAL FAILURE",
+    "VITAL SYSTEMS OFFLINE",
+    "MISSION STATUS: LOST",
+    "SIGNAL LOST — RECONNECT?",
+    "PROTOCOL FAILED",
+    "END OF SIMULATION"
+  ];
+  
+  // 2. ชุดข้อความบรรยาย (Lore) สำหรับสุ่มแสดง
+  const gameOverLores = [
+    "สารเคมีเข้มข้นเจือปนเข้าสู่กระแสเลือด... สิ่งทดลองกลืนกินร่างของคุณลงสู่ความมืดมิด",
+    "รหัสพันธุกรรมล้มเหลว... โครงสร้างชีวภาพของคุณถูกสิ่งทดลองย่อยสลายโดยสมบูรณ์",
+    "ระบบควบคุมสภาพแวดล้อมล้มเหลว... สัญญาณชีพของคุณดับลงท่ามกลางความมืดของแล็บ",
+    "ประตูแรงดันไม่ทำงาน... ร่างของคุณถูกลากกลับเข้าไปเป็นส่วนหนึ่งของสิ่งทดลองสปีชีส์ X",
+    "พลังงานสำรองหมดลง... เสียงกรีดร้องของคุณถูกกลืนหายไปในความมืดมิดของศูนย์วิจัย"
+  ];
+  
+  // สุ่มเลือกข้อความ
+  const randomTitle = gameOverTitles[Math.floor(Math.random() * gameOverTitles.length)];
+  const randomLore = gameOverLores[Math.floor(Math.random() * gameOverLores.length)];
+  
+  // อัปเดตข้อความหัวเรื่อง
+  const overTitleEl = document.querySelector('#gameOverScene h1.title');
+  if (overTitleEl) {
+    overTitleEl.textContent = randomTitle;
+  }
+
+  // อัปเดตข้อความบรรยาย (บรรทัดแรก)
+  const overLoreEl = document.querySelector('#gameOverScene p.lore');
+  if (overLoreEl) {
+    overLoreEl.textContent = randomLore;
+  }
   
   setTimeout(()=>{
     document.body.classList.remove('glitch-severe', 'heartbeat-active');
