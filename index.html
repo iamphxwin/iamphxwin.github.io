@@ -37,12 +37,12 @@ html, body {
   position: relative;
   width: 100%; height: 100vh; height: 100dvh;
   overflow: hidden;
+  transition: filter 0.5s ease;
 }
 
 #bgLayer {
   position: absolute; inset: 0; z-index: 0;
-  background: 
-    radial-gradient(circle at 50% 30%, #0d211a 0%, #050b08 60%, #010302 100%);
+  background: radial-gradient(circle at 50% 30%, #0d211a 0%, #050b08 60%, #010302 100%);
 }
 
 .lab-wall {
@@ -72,6 +72,11 @@ html, body {
   100% { transform: translateX(-10%) rotate(0deg); }
 }
 
+/* Particle Canvas */
+#particleCanvas {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0.6;
+}
+
 #flicker {
   position: absolute; inset: 0; z-index: 5; background: #000; opacity: 0;
   pointer-events: none;
@@ -79,36 +84,46 @@ html, body {
 .vignette {
   position: absolute; inset: 0; z-index: 4; pointer-events: none;
   background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.92) 100%);
+  transition: background 0.8s ease;
+}
+
+/* Critical Heartbeat Overlay */
+#heartbeatOverlay {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0;
+  box-shadow: inset 0 0 80px rgba(255, 30, 56, 0.6);
+}
+.heartbeat-active #heartbeatOverlay {
+  animation: pulseBeat 1.2s infinite ease-in-out;
+}
+@keyframes pulseBeat {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.01); }
 }
 
 .scanlines {
   position: absolute; inset: 0; z-index: 6; pointer-events: none;
   background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
-  background-size: 100% 4px;
-  opacity: 0.7;
+  background-size: 100% 4px; opacity: 0.7;
 }
 
-/* ---------- DARK GLITCH & ERROR OVERLAY EFFECTS (EYE-FRIENDLY) ---------- */
+/* EYE-FRIENDLY DARK GLITCH & ERROR OVERLAY */
 #glitchOverlay {
   position: absolute; inset: 0; z-index: 99; pointer-events: none; opacity: 0;
-  background: rgba(0, 5, 3, 0.75);
-  mix-blend-mode: multiply;
-  transition: opacity 0.1s ease;
+  background: rgba(0, 0, 0, 0.92);
+  transition: opacity 0.2s ease;
 }
 
 #errorBanner {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   z-index: 100; pointer-events: none; opacity: 0;
   font-family: 'Share Tech Mono', monospace; font-size: clamp(18px, 4.5vw, 36px);
-  font-weight: bold; 
-  color: #a81c2a; 
-  text-shadow: -2px 0 #005533, 2px 0 #330011;
+  font-weight: bold; color: #ff3344;
+  text-shadow: 0 0 10px rgba(255,0,0,0.8), -2px 0 #005533;
   letter-spacing: 4px; text-transform: uppercase; 
-  border: 1px solid #5a1018;
-  padding: 12px 28px; 
-  background: rgba(3, 5, 4, 0.95); 
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.9), inset 0 0 10px rgba(168, 28, 42, 0.3);
-  white-space: nowrap; transition: opacity 0.1s;
+  border: 1px solid #771018; padding: 12px 28px; 
+  background: rgba(8, 2, 3, 0.95); 
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+  white-space: nowrap; transition: opacity 0.2s;
 }
 
 .glitch-active #app {
@@ -116,47 +131,41 @@ html, body {
   filter: contrast(130%) brightness(75%) hue-rotate(15deg);
 }
 
+.glitch-severe #glitchOverlay { opacity: 0.95 !important; }
 .glitch-severe #app {
-  animation: severeDarkGlitch 0.12s infinite;
-  filter: contrast(180%) brightness(60%) grayscale(40%);
+  animation: severeDarkFade 0.8s forwards;
+  filter: brightness(25%) grayscale(70%);
 }
 
 @keyframes darkGlitch {
-  0% { transform: translate(0, 0) scale(1); }
+  0% { transform: translate(0, 0); }
   25% { transform: translate(-3px, 2px) skewX(0.8deg); }
-  50% { transform: translate(4px, -1px) scale(0.998); }
+  50% { transform: translate(4px, -1px); }
   75% { transform: translate(-2px, -3px) skewX(-0.5deg); }
-  100% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(0, 0); }
 }
 
-@keyframes severeDarkGlitch {
-  0% { transform: translate(-6px, 4px) scale(1.01); filter: brightness(40%) contrast(200%); }
-  33% { transform: translate(6px, -4px) skewX(3deg); filter: brightness(70%) grayscale(80%); }
-  66% { transform: translate(-4px, -5px) scale(0.99); filter: brightness(30%); }
-  100% { transform: translate(0, 0); }
+@keyframes severeDarkFade {
+  0% { transform: scale(1); filter: brightness(100%); }
+  20% { transform: translate(-4px, 4px) scale(1.02); filter: brightness(50%); }
+  50% { transform: translate(4px, -2px) scale(0.98); filter: brightness(20%); }
+  100% { transform: scale(1); filter: brightness(10%); }
 }
 
 .scene {
   position: absolute; inset: 0; z-index: 10;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 5vw;
-  opacity: 0; visibility: hidden;
+  padding: 5vw; opacity: 0; visibility: hidden;
   transition: opacity .6s cubic-bezier(0.16, 1, 0.3, 1), transform .6s cubic-bezier(0.16, 1, 0.3, 1);
-  transform: scale(0.98);
-  text-align: center;
-  overflow-y: auto;
+  transform: scale(0.98); text-align: center; overflow-y: auto;
 }
 .scene.active { opacity: 1; visibility: visible; transform: scale(1); }
 
 h1.title {
-  font-family: 'Creepster', cursive;
-  color: var(--acid);
-  font-size: clamp(34px, 8vw, 68px);
-  line-height: 1.1;
-  letter-spacing: 2px;
+  font-family: 'Creepster', cursive; color: var(--acid);
+  font-size: clamp(34px, 8vw, 68px); line-height: 1.1; letter-spacing: 2px;
   text-shadow: 0 0 10px var(--acid-glow), 0 0 30px var(--acid-glow), 0 0 60px rgba(0, 255, 102, 0.2);
-  margin: 0 0 10px 0;
-  animation: flick 5s infinite;
+  margin: 0 0 10px 0; animation: flick 5s infinite;
 }
 @keyframes flick {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; filter: drop-shadow(0 0 15px var(--acid)); }
@@ -164,24 +173,15 @@ h1.title {
 }
 
 .subtitle {
-  font-family: 'Share Tech Mono', monospace;
-  color: var(--hazard);
-  font-size: clamp(12px, 2.5vw, 15px);
-  letter-spacing: 4px;
-  margin-bottom: 24px;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--hazard);
-  padding-bottom: 4px;
-  display: inline-block;
+  font-family: 'Share Tech Mono', monospace; color: var(--hazard);
+  font-size: clamp(12px, 2.5vw, 15px); letter-spacing: 4px;
+  margin-bottom: 24px; text-transform: uppercase;
+  border-bottom: 1px solid var(--hazard); padding-bottom: 4px; display: inline-block;
 }
 
 p.lore {
-  font-size: clamp(14px, 3.2vw, 17px);
-  line-height: 1.8;
-  color: var(--bone);
-  max-width: 580px;
-  margin: 0 auto 14px auto;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  font-size: clamp(14px, 3.2vw, 17px); line-height: 1.8; color: var(--bone);
+  max-width: 580px; margin: 0 auto 14px auto; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
 .eyes {
@@ -201,35 +201,27 @@ p.lore {
 }
 
 .btn {
-  font-family: 'Chakra Petch', sans-serif;
-  font-weight: 700;
+  font-family: 'Chakra Petch', sans-serif; font-weight: 700;
   background: linear-gradient(135deg, #14281f 0%, #09120e 100%);
-  color: var(--acid);
-  border: 1px solid var(--acid);
-  padding: 14px 38px;
-  font-size: 16px;
-  letter-spacing: 2px;
-  cursor: pointer;
+  color: var(--acid); border: 1px solid var(--acid);
+  padding: 14px 38px; font-size: 16px; letter-spacing: 2px; cursor: pointer;
   clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-  transition: all .25s ease;
-  margin-top: 10px;
-  position: relative;
+  transition: all .25s ease; margin-top: 10px; position: relative;
   box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1);
 }
-.btn:hover {
-  background: var(--acid);
-  color: #000;
-  box-shadow: 0 0 25px var(--acid-glow);
-  transform: translateY(-2px);
+.btn:hover:not(:disabled) {
+  background: var(--acid); color: #000;
+  box-shadow: 0 0 25px var(--acid-glow); transform: translateY(-2px);
 }
-.btn:active { transform: translateY(1px); }
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
 .btn.danger {
   color: var(--blood); border-color: var(--blood);
   background: linear-gradient(135deg, #2b0b10 0%, #120305 100%);
 }
-.btn.danger:hover { background: var(--blood); color: #fff; box-shadow: 0 0 25px var(--blood-glow); }
+.btn.danger:hover:not(:disabled) { background: var(--blood); color: #fff; box-shadow: 0 0 25px var(--blood-glow); }
 .btn.ghostBtn { background: transparent; color: var(--bone-dim); border-color: #2c4236; }
-.btn.ghostBtn:hover { color: var(--hazard); border-color: var(--hazard); box-shadow: 0 0 15px rgba(255,183,0,0.3); }
+.btn.ghostBtn:hover:not(:disabled) { color: var(--hazard); border-color: var(--hazard); box-shadow: 0 0 15px rgba(255,183,0,0.3); }
 .btn.small { padding: 8px 20px; font-size: 13px; }
 .btnRow { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
 
@@ -238,8 +230,7 @@ p.lore {
   background: rgba(10,20,15,0.8); border: 1px solid var(--acid-dim);
   color: var(--acid); width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
-  backdrop-filter: blur(5px);
-  transition: all 0.3s;
+  backdrop-filter: blur(5px); transition: all 0.3s;
 }
 .icon-toggle:hover { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
 
@@ -247,59 +238,57 @@ p.lore {
 .hud {
   width: 100%; max-width: 680px;
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 8px;
-  font-family: 'Share Tech Mono', monospace;
-  color: var(--acid);
+  margin-bottom: 8px; font-family: 'Share Tech Mono', monospace; color: var(--acid);
 }
 .hud .doorCount { font-size: 20px; letter-spacing: 2px; text-shadow: 0 0 8px var(--acid-glow); }
 
 .vials { display: flex; gap: 10px; }
 .vial {
-  width: 16px; height: 32px;
-  border: 1.5px solid rgba(255,255,255,0.4);
-  border-radius: 3px 3px 8px 8px;
-  background: rgba(0,0,0,0.5);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 8px rgba(0,0,0,0.8);
+  width: 16px; height: 32px; border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: 3px 3px 8px 8px; background: rgba(0,0,0,0.5);
+  position: relative; overflow: hidden; box-shadow: 0 0 8px rgba(0,0,0,0.8);
 }
 .vial::before {
   content:''; position: absolute; bottom: 1px; left: 1px; right: 1px; top: 30%;
   background: linear-gradient(180deg, #ff5566 0%, var(--blood) 100%);
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 0 10px var(--blood);
+  border-radius: 0 0 6px 6px; box-shadow: 0 0 10px var(--blood);
   transition: all 0.4s ease;
 }
 .vial.used::before { top: 90%; opacity: 0.15; }
 
+/* Timer & Progress Bars */
+.barGroup { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
 .progressBar {
-  width: 100%; max-width: 680px; height: 8px; background: rgba(5,15,10,0.8);
-  border: 1px solid var(--panel-border);
-  margin-bottom: 14px; position: relative; border-radius: 4px; overflow: hidden;
+  width: 100%; height: 8px; background: rgba(5,15,10,0.8);
+  border: 1px solid var(--panel-border); position: relative; border-radius: 4px; overflow: hidden;
 }
 .progressFill {
   height: 100%; background: linear-gradient(90deg, var(--acid-dim), var(--acid));
-  box-shadow: 0 0 10px var(--acid);
-  width: 0%; transition: width .5s ease;
+  box-shadow: 0 0 10px var(--acid); width: 0%; transition: width .5s ease;
+}
+
+.timerBar {
+  width: 100%; height: 6px; background: rgba(20,5,5,0.8);
+  border: 1px solid rgba(255, 30, 56, 0.3); position: relative; border-radius: 3px; overflow: hidden;
+}
+.timerFill {
+  height: 100%; background: linear-gradient(90deg, #ffb700, var(--blood));
+  box-shadow: 0 0 8px var(--blood); width: 100%; transition: width 0.1s linear;
 }
 
 .stage {
-  position: relative; width: 100%; max-width: 680px; height: 30vh; min-height: 180px;
+  position: relative; width: 100%; max-width: 680px; height: 28vh; min-height: 170px;
   margin-bottom: 12px;
   background: linear-gradient(180deg, rgba(3,8,6,0.9) 0%, rgba(10,20,15,0.6) 100%);
-  border: 1px solid rgba(0,255,102,0.15);
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: inset 0 0 40px #000;
+  border: 1px solid rgba(0,255,102,0.15); border-radius: 6px;
+  overflow: hidden; box-shadow: inset 0 0 40px #000;
 }
 
 .ghost {
-  position: absolute; bottom: -5%;
-  right: 88%;
+  position: absolute; bottom: -5%; right: 88%;
   width: 130px; height: 160px;
   transition: right 1.2s cubic-bezier(.25,1,.5,1), transform .4s;
-  filter: drop-shadow(0 0 15px rgba(0,0,0,0.9));
-  z-index: 2;
+  filter: drop-shadow(0 0 15px rgba(0,0,0,0.9)); z-index: 2;
 }
 .ghost.approach1 { right: 62%; }
 .ghost.approach2 { right: 38%; }
@@ -316,11 +305,9 @@ p.lore {
 .door {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
   background: linear-gradient(90deg, #1c262b 0%, #2a3840 50%, #151d21 100%);
-  border: 3px solid #0d1317;
-  border-top-left-radius: 6px; border-top-right-radius: 6px;
+  border: 3px solid #0d1317; border-top-left-radius: 6px; border-top-right-radius: 6px;
   box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.9);
-  transform-origin: left center;
-  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: left center; transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 .door::before {
@@ -341,12 +328,23 @@ p.lore {
   border-radius: 2px; box-shadow: 0 0 8px var(--hazard);
 }
 
+/* Power-ups / Items Toolbar */
+.toolsBar {
+  width: 100%; max-width: 680px; display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 8px;
+}
+.toolBtn {
+  font-family: 'Share Tech Mono', monospace; font-size: 12px;
+  background: rgba(10,25,18,0.8); border: 1px solid var(--acid-dim); color: var(--acid);
+  padding: 5px 12px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.toolBtn:hover:not(:disabled) { border-color: var(--acid); box-shadow: 0 0 10px var(--acid-glow); background: rgba(0,255,102,0.15); }
+.toolBtn:disabled { opacity: 0.3; border-color: #333; color: #666; cursor: default; }
+
 .panel {
   width: 100%; max-width: 680px;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: 6px;
-  padding: 22px 24px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border);
+  border-radius: 6px; padding: 20px 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,255,102,0.03);
   backdrop-filter: blur(8px);
 }
@@ -356,20 +354,15 @@ p.lore {
 }
 .qText {
   font-size: clamp(15px, 3.6vw, 19px); line-height: 1.6; color: var(--bone);
-  margin-bottom: 20px; min-height: 56px; text-align: left; font-weight: 600;
+  margin-bottom: 18px; min-height: 52px; text-align: left; font-weight: 600;
 }
-.optionsGrid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-}
-@media (max-width: 520px) {
-  .optionsGrid { grid-template-columns: 1fr; }
-}
+.optionsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 520px) { .optionsGrid { grid-template-columns: 1fr; } }
 .optionBtn {
   font-family: 'Chakra Petch', sans-serif; font-size: 15px; font-weight: 600;
   background: rgba(4, 10, 8, 0.7); border: 1px solid #1a3328; color: var(--bone);
-  padding: 14px 14px; border-radius: 4px; cursor: pointer; text-align: left;
-  transition: all .2s ease;
-  display: flex; align-items: center;
+  padding: 13px 14px; border-radius: 4px; cursor: pointer; text-align: left;
+  transition: all .2s ease; display: flex; align-items: center;
 }
 .optionBtn:hover:not(:disabled) {
   border-color: var(--acid); background: rgba(0, 255, 102, 0.08);
@@ -385,13 +378,12 @@ p.lore {
   border-color: var(--blood); background: rgba(255, 30, 56, 0.25); color: #fff;
   box-shadow: 0 0 15px var(--blood-glow);
 }
+.optionBtn.eliminated { opacity: 0.15; pointer-events: none; border-color: transparent; }
 .optionLetter {
   color: var(--hazard); margin-right: 10px; font-family: 'Share Tech Mono', monospace; font-size: 16px;
 }
 
-.feedback {
-  margin-top: 14px; min-height: 24px; font-size: 15px; font-weight: 700; letter-spacing: 1px;
-}
+.feedback { margin-top: 12px; min-height: 22px; font-size: 15px; font-weight: 700; letter-spacing: 1px; }
 .feedback.correct { color: var(--acid); text-shadow: 0 0 8px var(--acid-glow); }
 .feedback.wrong { color: var(--blood); text-shadow: 0 0 8px var(--blood-glow); }
 
@@ -415,15 +407,13 @@ p.lore {
 #nameInput {
   background: rgba(2, 6, 4, 0.8); border: 1px solid var(--acid-dim); color: var(--acid);
   font-family: 'Share Tech Mono', monospace; font-size: 18px; padding: 10px 14px; border-radius: 4px;
-  outline: none; letter-spacing: 1px; width: 240px; max-width: 70vw;
-  transition: all 0.3s;
+  outline: none; letter-spacing: 1px; width: 240px; max-width: 70vw; transition: all 0.3s;
 }
 #nameInput:focus { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
 .saveNote { font-size: 12px; color: var(--bone-dim); max-width: 420px; margin: 0 auto 8px auto; }
 
 .lbWrap {
-  width: 100%; max-width: 520px;
-  background: var(--panel-bg);
+  width: 100%; max-width: 520px; background: var(--panel-bg);
   border: 1px solid var(--panel-border); border-radius: 6px;
   padding: 16px; margin: 16px 0; max-height: 48vh; overflow-y: auto;
   box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
@@ -441,7 +431,7 @@ p.lore {
 .lbEmpty { color: var(--bone-dim); font-size: 14px; padding: 20px 0; }
 
 @media (max-width: 480px) {
-  .stage { height: 26vh; }
+  .stage { height: 24vh; }
   .doorWrap { width: 95px; }
   .ghost { width: 95px; height: 120px; }
   .panel { padding: 16px; }
@@ -450,6 +440,8 @@ p.lore {
 </head>
 <body>
 <div id="app">
+  <canvas id="particleCanvas"></canvas>
+  <div id="heartbeatOverlay"></div>
   <div id="glitchOverlay"></div>
   <div id="errorBanner">SYSTEM_ERROR</div>
 
@@ -457,7 +449,7 @@ p.lore {
     <div class="lab-wall"></div>
     <div class="fog"></div>
     <div class="fog f2"></div>
-    <div class="vignette"></div>
+    <div class="vignette" id="vignette"></div>
     <div class="scanlines"></div>
     <div id="flicker"></div>
   </div>
@@ -482,11 +474,11 @@ p.lore {
       ไอน้ำเคมีเข้มข้นลอยปกคลุมพื้นห้อง ทางออกเดียวของคุณคือประตูแรงดันเหล็กกล้า 14 บาน
     </p>
     <p class="lore">
-      ประตูแต่ละบานถูกควบคุมด้วยระบบความปลอดภัยสรีรวิทยาของพืช คุณต้องตอบคำถามเพื่อปลดล็อกสลัก
+      ประตูแต่ละบานถูกควบคุมด้วยระบบความปลอดภัยสรีรวิทยาของพืช คุณต้องตอบคำถามแข่งกับเวลาเพื่อปลดล็อกสลัก
     </p>
     <p class="lore" style="color:var(--hazard)">
       เตือนภัย: สิ่งทดลองสปีชีส์ X หลุดออกจากหลอดแก้ว...<br>
-      ตอบผิดพลาดเกิน <strong>4 ครั้ง</strong> ระบบกลไกจะล้มเหลวและมันจะสังหารคุณทันที
+      ตอบผิดพลาดหรือหมดเวลาสะสมเกิน <strong>4 ครั้ง</strong> ระบบกลไกจะล้มเหลวและมันจะสังหารคุณทันที
     </p>
     <button class="btn" id="btnToGame">เข้าสู่พื้นที่ปลดล็อก</button>
   </section>
@@ -496,7 +488,11 @@ p.lore {
       <div class="doorCount">SEC_DOOR: <span id="doorNum">01</span> / <span id="doorTotal">14</span></div>
       <div class="vials" id="vials"></div>
     </div>
-    <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+    
+    <div class="barGroup">
+      <div class="progressBar"><div class="progressFill" id="progressFill"></div></div>
+      <div class="timerBar"><div class="timerFill" id="timerFill"></div></div>
+    </div>
 
     <div class="stage">
       <div class="doorWrap">
@@ -536,6 +532,11 @@ p.lore {
           <path d="M70 146 L75 155 L80 147 L87 157 L93 148 L100 159 L107 148 L114 157 L120 147 L126 155 L130 146" stroke="#d3e0d8" stroke-width="2.5" fill="none"/>
         </svg>
       </div>
+    </div>
+
+    <div class="toolsBar">
+      <button class="toolBtn" id="btnItem5050">🧪 50:50 (ตัด 2 ชอยส์)</button>
+      <button class="toolBtn" id="btnItemFreeze">⏱️ หยุดเวลา 10s</button>
     </div>
 
     <div class="panel">
@@ -583,7 +584,7 @@ p.lore {
 </div>
 
 <script>
-const QUESTIONS = [
+const BASE_QUESTIONS = [
   {q:"พลังงานอิสระของน้ำต่อ 1 หน่วยปริมาตร ซึ่งจะมีผลต่อทิศทางการเคลื่อนที่ของน้ำ เรียกว่าอะไร", ans:"Water Potential"},
   {q:"ธาตุอาหารที่จำเป็นต่อการเจริญเติบโตของพืชที่พืชต้องการในปริมาณมาก คืออะไร", ans:"Macronutrient"},
   {q:"การสูญเสียน้ำของพืชในรูปของไอน้ำ ซึ่งส่วนใหญ่เกิดผ่านทางใบ เรียกว่าอะไร", ans:"Transpiration"},
@@ -599,8 +600,10 @@ const QUESTIONS = [
   {q:"ช่องที่มีสาย cytoplasm เชื่อมต่อระหว่าง 2 เซลล์ที่อยู่ติดกัน ทำให้มีการลำเลียงน้ำจากเซลล์หนึ่งไปยังอีกเซลล์หนึ่งได้ เรียกว่าอะไร", ans:"Plasmodesmata"},
   {q:"การลำเลียงน้ำเข้าสู่ xylem จากเซลล์หนึ่งสู่อีกเซลล์หนึ่งผ่านทางเยื่อหุ้มเซลล์ เรียกว่าอะไร", ans:"Transmembrane Pathway"}
 ];
-const ALL_TERMS = QUESTIONS.map(q=>q.ans);
+
+const ALL_TERMS = BASE_QUESTIONS.map(q=>q.ans);
 const MAX_WRONG = 4;
+const QUESTION_TIME_LIMIT = 15; // วินาทีต่อข้อ
 
 function shuffle(arr){
   const a = arr.slice();
@@ -610,14 +613,65 @@ function shuffle(arr){
   }
   return a;
 }
+
 function buildOptions(correctAns){
   const distractorsPool = ALL_TERMS.filter(t=>t!==correctAns);
   const distractors = shuffle(distractorsPool).slice(0,3);
   return shuffle([correctAns, ...distractors]);
 }
 
-let state = { doorIndex:0, wrong:0, soundOn:true, startTime:0, currentOptions:[] };
+let state = {
+  questions: [],
+  doorIndex: 0,
+  wrong: 0,
+  soundOn: true,
+  startTime: 0,
+  currentOptions: [],
+  timer: null,
+  timeLeft: QUESTION_TIME_LIMIT,
+  items: { fiftyFifty: true, freeze: true }
+};
 
+/* Canvas Particle System (Chemical Dust/Sparks) */
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor(){ this.reset(); }
+  reset(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = -Math.random() * 0.6 - 0.2;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+  update(){
+    this.x += this.speedX; this.y += this.speedY;
+    if(this.y < 0 || this.x < 0 || this.x > canvas.width) this.reset();
+  }
+  draw(){
+    ctx.fillStyle = `rgba(0, 255, 102, ${this.alpha})`;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
+  }
+}
+for(let i=0; i<45; i++) particles.push(new Particle());
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{ p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* Audio System */
 let actx = null;
 function ensureAudio(){
   if(!actx){
@@ -635,25 +689,16 @@ function startAmbient(){
   const data = buffer.getChannelData(0);
   for(let i=0;i<bufferSize;i++){ data[i] = Math.random()*2-1; }
   const wind = actx.createBufferSource();
-  wind.buffer = buffer;
-  wind.loop = true;
+  wind.buffer = buffer; wind.loop = true;
   const windFilter = actx.createBiquadFilter();
-  windFilter.type = 'lowpass';
-  windFilter.frequency.value = 200;
-  windFilter.Q.value = 1.0;
-  const windGain = actx.createGain();
-  windGain.gain.value = 0.02;
+  windFilter.type = 'lowpass'; windFilter.frequency.value = 200; windFilter.Q.value = 1.0;
+  const windGain = actx.createGain(); windGain.gain.value = 0.02;
 
-  const lfo = actx.createOscillator();
-  lfo.frequency.value = 0.08;
-  const lfoGain = actx.createGain();
-  lfoGain.gain.value = 0.012;
-  lfo.connect(lfoGain);
-  lfoGain.connect(windGain.gain);
+  const lfo = actx.createOscillator(); lfo.frequency.value = 0.08;
+  const lfoGain = actx.createGain(); lfoGain.gain.value = 0.012;
+  lfo.connect(lfoGain); lfoGain.connect(windGain.gain);
 
-  wind.connect(windFilter);
-  windFilter.connect(windGain);
-  windGain.connect(actx.destination);
+  wind.connect(windFilter); windFilter.connect(windGain); windGain.connect(actx.destination);
   wind.start(); lfo.start();
   ambientNodes.push(wind, lfo);
   scheduleWhisper();
@@ -662,10 +707,7 @@ function startAmbient(){
 function scheduleWhisper(){
   if(!actx || !state.soundOn) return;
   const delay = 6000 + Math.random()*8000;
-  setTimeout(()=>{
-    if(state.soundOn && actx) playWhisper();
-    scheduleWhisper();
-  }, delay);
+  setTimeout(()=>{ if(state.soundOn && actx) playWhisper(); scheduleWhisper(); }, delay);
 }
 
 function playWhisper(){
@@ -673,14 +715,10 @@ function playWhisper(){
   const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
   const data = buffer.getChannelData(0);
   for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
-  const src = actx.createBufferSource();
-  src.buffer = buffer;
-  const filt = actx.createBiquadFilter();
-  filt.type = 'bandpass';
-  filt.frequency.value = 250 + Math.random()*150;
-  filt.Q.value = 2.0;
-  const gain = actx.createGain();
-  gain.gain.value = 0.04;
+  const src = actx.createBufferSource(); src.buffer = buffer;
+  const filt = actx.createBiquadFilter(); filt.type = 'bandpass';
+  filt.frequency.value = 250 + Math.random()*150; filt.Q.value = 2.0;
+  const gain = actx.createGain(); gain.gain.value = 0.04;
   src.connect(filt); filt.connect(gain); gain.connect(actx.destination);
   src.start();
 }
@@ -693,15 +731,12 @@ function stopAmbient(){
 function toneBurst(freq, dur, type='sine', vol=0.15, glideTo=null){
   if(!actx || !state.soundOn) return;
   const osc = actx.createOscillator();
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, actx.currentTime);
+  osc.type = type; osc.frequency.setValueAtTime(freq, actx.currentTime);
   if(glideTo) osc.frequency.exponentialRampToValueAtTime(glideTo, actx.currentTime + dur);
   const g = actx.createGain();
-  g.gain.setValueAtTime(vol, actx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
+  g.gain.setValueAtTime(vol, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + dur);
   osc.connect(g); g.connect(actx.destination);
-  osc.start();
-  osc.stop(actx.currentTime + dur + 0.05);
+  osc.start(); osc.stop(actx.currentTime + dur + 0.05);
 }
 
 function playCorrect(){
@@ -718,34 +753,28 @@ function playGlitchNoise(){
   const buffer = actx.createBuffer(1, bufferSize, actx.sampleRate);
   const data = buffer.getChannelData(0);
   for(let i=0; i<bufferSize; i++){ data[i] = (Math.random()*2-1); }
-  const src = actx.createBufferSource();
-  src.buffer = buffer;
-  const gain = actx.createGain();
-  gain.gain.setValueAtTime(0.1, actx.currentTime);
+  const src = actx.createBufferSource(); src.buffer = buffer;
+  const gain = actx.createGain(); gain.gain.setValueAtTime(0.1, actx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.2);
   src.connect(gain); gain.connect(actx.destination);
   src.start();
 }
 function playDoorCreak(){
   if(!actx || !state.soundOn) return;
-  const osc = actx.createOscillator();
-  osc.type = 'sawtooth';
+  const osc = actx.createOscillator(); osc.type = 'sawtooth';
   osc.frequency.setValueAtTime(90, actx.currentTime);
   osc.frequency.linearRampToValueAtTime(40, actx.currentTime + 0.8);
-  const g = actx.createGain();
-  g.gain.setValueAtTime(0.04, actx.currentTime);
+  const g = actx.createGain(); g.gain.setValueAtTime(0.04, actx.currentTime);
   g.gain.linearRampToValueAtTime(0.0001, actx.currentTime + 0.8);
   osc.connect(g); g.connect(actx.destination);
   osc.start(); osc.stop(actx.currentTime + 0.85);
 }
 function playScream(){
   if(!actx || !state.soundOn) return;
-  const osc = actx.createOscillator();
-  osc.type = 'sawtooth';
+  const osc = actx.createOscillator(); osc.type = 'sawtooth';
   osc.frequency.setValueAtTime(600, actx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(80, actx.currentTime + 1.0);
-  const g = actx.createGain();
-  g.gain.setValueAtTime(0.15, actx.currentTime);
+  const g = actx.createGain(); g.gain.setValueAtTime(0.15, actx.currentTime);
   g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 1.0);
   osc.connect(g); g.connect(actx.destination);
   osc.start(); osc.stop(actx.currentTime + 1.05);
@@ -784,16 +813,29 @@ document.getElementById('soundToggle').addEventListener('click', (e)=>{
   if(state.soundOn){ ensureAudio(); } else { stopAmbient(); }
 });
 
-document.getElementById('doorTotal').textContent = QUESTIONS.length;
+document.getElementById('doorTotal').textContent = BASE_QUESTIONS.length;
 
 function resetGame(){
+  state.questions = shuffle(BASE_QUESTIONS); // สุ่มลำดับคำถามใหม่
   state.doorIndex = 0;
   state.wrong = 0;
   state.startTime = Date.now();
-  document.body.classList.remove('glitch-active', 'glitch-severe');
+  state.items = { fiftyFifty: true, freeze: true };
+  
+  document.body.classList.remove('glitch-active', 'glitch-severe', 'heartbeat-active');
+  document.getElementById('vignette').style.background = 'radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.92) 100%)';
+  
+  updateToolButtons();
   renderVials();
   updateGhost();
   loadQuestion();
+}
+
+function updateToolButtons(){
+  const btn50 = document.getElementById('btnItem5050');
+  const btnFr = document.getElementById('btnItemFreeze');
+  btn50.disabled = !state.items.fiftyFifty;
+  btnFr.disabled = !state.items.freeze;
 }
 
 function triggerGlitchEffect(isCritical = false){
@@ -802,7 +844,7 @@ function triggerGlitchEffect(isCritical = false){
   
   banner.textContent = isCritical ? 'CRITICAL_FAILURE // SYSTEM_CRASH' : 'SYSTEM_ERROR // ACCESS_DENIED';
   document.body.classList.add(isCritical ? 'glitch-severe' : 'glitch-active');
-  overlay.style.opacity = isCritical ? '0.85' : '0.5';
+  overlay.style.opacity = isCritical ? '0.95' : '0.6';
   banner.style.opacity = '1';
 
   setTimeout(()=>{
@@ -811,7 +853,7 @@ function triggerGlitchEffect(isCritical = false){
       overlay.style.opacity = '0';
       banner.style.opacity = '0';
     }
-  }, isCritical ? 1200 : 450);
+  }, isCritical ? 1000 : 450);
 }
 
 function renderVials(){
@@ -827,43 +869,87 @@ function renderVials(){
 function updateGhost(){
   const ghost = document.getElementById('ghost');
   ghost.classList.remove('approach1','approach2','approach3','lunge');
-  if(state.wrong === 1) ghost.classList.add('approach1');
-  else if(state.wrong === 2) ghost.classList.add('approach2');
-  else if(state.wrong === 3) ghost.classList.add('approach3');
+  
+  // ปรับบรรยากาศไฟตามระดับความอันตราย
+  const vignette = document.getElementById('vignette');
+  if(state.wrong === 1) {
+    ghost.classList.add('approach1');
+    vignette.style.background = 'radial-gradient(circle at 50% 50%, transparent 35%, rgba(40, 5, 5, 0.92) 100%)';
+  } else if(state.wrong === 2) {
+    ghost.classList.add('approach2');
+    vignette.style.background = 'radial-gradient(circle at 50% 50%, transparent 30%, rgba(80, 10, 10, 0.95) 100%)';
+  } else if(state.wrong === 3) {
+    ghost.classList.add('approach3');
+    document.body.classList.add('heartbeat-active');
+    vignette.style.background = 'radial-gradient(circle at 50% 50%, transparent 25%, rgba(120, 10, 15, 0.98) 100%)';
+  }
+}
+
+/* Timer Control */
+function startQuestionTimer(){
+  clearInterval(state.timer);
+  state.timeLeft = QUESTION_TIME_LIMIT;
+  updateTimerUI();
+  
+  state.timer = setInterval(()=>{
+    state.timeLeft -= 0.1;
+    if(state.timeLeft <= 0){
+      state.timeLeft = 0;
+      clearInterval(state.timer);
+      handleTimeout();
+    }
+    updateTimerUI();
+  }, 100);
+}
+
+function updateTimerUI(){
+  const fill = document.getElementById('timerFill');
+  const pct = (state.timeLeft / QUESTION_TIME_LIMIT) * 100;
+  fill.style.width = Math.max(0, pct) + '%';
+}
+
+function handleTimeout(){
+  const feedback = document.getElementById('feedback');
+  feedback.textContent = 'TIMEOUT // ระบบความปลอดภัยตัดการทำงาน!';
+  feedback.className = 'feedback wrong';
+  handleWrongAnswer();
 }
 
 const LETTERS = ['ก','ข','ค','ง'];
 
 function loadQuestion(){
   const idx = state.doorIndex;
-  const total = QUESTIONS.length;
+  const total = state.questions.length;
   document.getElementById('doorNum').textContent = (idx+1 < 10 ? '0' : '') + (idx+1);
   document.getElementById('qIndex').textContent = (idx+1 < 10 ? '0' : '') + (idx+1);
-  document.getElementById('qText').textContent = QUESTIONS[idx].q;
+  document.getElementById('qText').textContent = state.questions[idx].q;
   document.getElementById('progressFill').style.width = (idx/total*100)+'%';
   document.getElementById('feedback').textContent = '';
   document.getElementById('feedback').className = 'feedback';
   document.getElementById('door').classList.remove('open');
   document.getElementById('doorGlow').classList.remove('show');
 
-  state.currentOptions = buildOptions(QUESTIONS[idx].ans);
+  state.currentOptions = buildOptions(state.questions[idx].ans);
   const grid = document.getElementById('optionsGrid');
   grid.innerHTML = '';
   state.currentOptions.forEach((opt, i)=>{
     const b = document.createElement('button');
     b.className = 'optionBtn';
+    b.dataset.opt = opt;
     b.innerHTML = '<span class="optionLetter">'+LETTERS[i]+'.</span>'+opt;
     b.addEventListener('click', ()=>selectOption(opt, b));
     grid.appendChild(b);
   });
+
+  startQuestionTimer();
 }
 
 function selectOption(chosen, btnEl){
+  clearInterval(state.timer);
   const idx = state.doorIndex;
-  const correctAns = QUESTIONS[idx].ans;
+  const correctAns = state.questions[idx].ans;
   const correct = chosen === correctAns;
   const feedback = document.getElementById('feedback');
-  const panel = document.querySelector('.panel');
   const allBtns = document.querySelectorAll('.optionBtn');
   allBtns.forEach(b=>b.disabled = true);
 
@@ -878,7 +964,7 @@ function selectOption(chosen, btnEl){
 
     setTimeout(()=>{
       state.doorIndex++;
-      if(state.doorIndex >= QUESTIONS.length){
+      if(state.doorIndex >= state.questions.length){
         winGame();
       } else {
         loadQuestion();
@@ -886,38 +972,77 @@ function selectOption(chosen, btnEl){
     }, 1100);
   } else {
     btnEl.classList.add('isWrong');
-    allBtns.forEach(b=>{ if(b.textContent.trim().endsWith(correctAns)) b.classList.add('isCorrect'); });
-    playWrong();
-    state.wrong++;
-    renderVials();
-    updateGhost();
-    
-    feedback.textContent = 'ACCESS DENIED // ระบบรักษาความปลอดภัยล้มเหลว!';
+    allBtns.forEach(b=>{ if(b.dataset.opt === correctAns) b.classList.add('isCorrect'); });
+    feedback.textContent = 'ACCESS DENIED // รหัสผ่านไม่ถูกต้อง!';
     feedback.className = 'feedback wrong';
-    panel.classList.remove('flashRed'); void panel.offsetWidth; panel.classList.add('flashRed');
-    document.getElementById('gameScene').classList.remove('shake'); void document.getElementById('gameScene').offsetWidth;
-    document.getElementById('gameScene').classList.add('shake');
-
-    if(state.wrong >= MAX_WRONG){
-      triggerGlitchEffect(true);
-      setTimeout(()=>loseGame(), 1000);
-    } else {
-      triggerGlitchEffect(false);
-      setTimeout(()=>{
-        allBtns.forEach(b=>{ b.disabled=false; b.classList.remove('isWrong','isCorrect'); });
-        feedback.textContent='';
-      }, 1100);
-    }
+    handleWrongAnswer();
   }
 }
 
+function handleWrongAnswer(){
+  const panel = document.querySelector('.panel');
+  const allBtns = document.querySelectorAll('.optionBtn');
+  allBtns.forEach(b=>b.disabled = true);
+
+  playWrong();
+  state.wrong++;
+  renderVials();
+  updateGhost();
+
+  panel.classList.remove('flashRed'); void panel.offsetWidth; panel.classList.add('flashRed');
+  document.getElementById('gameScene').classList.remove('shake'); void document.getElementById('gameScene').offsetWidth;
+  document.getElementById('gameScene').classList.add('shake');
+
+  if(state.wrong >= MAX_WRONG){
+    triggerGlitchEffect(true);
+    setTimeout(()=>loseGame(), 900);
+  } else {
+    triggerGlitchEffect(false);
+    setTimeout(()=>{
+      allBtns.forEach(b=>{ b.disabled=false; b.classList.remove('isWrong','isCorrect'); });
+      document.getElementById('feedback').textContent='';
+      startQuestionTimer();
+    }, 1200);
+  }
+}
+
+/* Items Action */
+document.getElementById('btnItem5050').addEventListener('click', ()=>{
+  if(!state.items.fiftyFifty) return;
+  state.items.fiftyFifty = false;
+  updateToolButtons();
+  
+  const correctAns = state.questions[state.doorIndex].ans;
+  const btns = Array.from(document.querySelectorAll('.optionBtn'));
+  const wrongBtns = btns.filter(b => b.dataset.opt !== correctAns);
+  const toEliminate = shuffle(wrongBtns).slice(0, 2);
+  
+  toEliminate.forEach(b => {
+    b.classList.add('eliminated');
+    b.disabled = true;
+  });
+  toneBurst(400, 0.15, 'sine', 0.1);
+});
+
+document.getElementById('btnItemFreeze').addEventListener('click', ()=>{
+  if(!state.items.freeze) return;
+  state.items.freeze = false;
+  updateToolButtons();
+  
+  state.timeLeft += 10;
+  if(state.timeLeft > QUESTION_TIME_LIMIT) state.timeLeft = QUESTION_TIME_LIMIT;
+  updateTimerUI();
+  toneBurst(800, 0.2, 'triangle', 0.1);
+});
+
 function loseGame(){
+  clearInterval(state.timer);
   const ghost = document.getElementById('ghost');
   ghost.classList.add('lunge');
   playScream();
   
   setTimeout(()=>{
-    document.body.classList.remove('glitch-severe');
+    document.body.classList.remove('glitch-severe', 'heartbeat-active');
     document.getElementById('glitchOverlay').style.opacity = '0';
     document.getElementById('errorBanner').style.opacity = '0';
     document.getElementById('failCount').textContent = state.wrong;
@@ -935,6 +1060,8 @@ function formatTime(ms){
 
 let lastWinTimeMs = 0;
 function winGame(){
+  clearInterval(state.timer);
+  document.body.classList.remove('heartbeat-active');
   document.getElementById('progressFill').style.width = '100%';
   playWinChime();
   lastWinTimeMs = Date.now() - state.startTime;
