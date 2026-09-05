@@ -225,14 +225,92 @@ p.lore {
 .btn.small { padding: 8px 20px; font-size: 13px; }
 .btnRow { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
 
-.icon-toggle {
+/* Control Buttons Top Right */
+.top-controls {
   position: absolute; top: 20px; right: 20px; z-index: 30;
+  display: flex; gap: 10px; align-items: center;
+}
+.icon-toggle {
   background: rgba(10,20,15,0.8); border: 1px solid var(--acid-dim);
   color: var(--acid); width: 44px; height: 44px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
   backdrop-filter: blur(5px); transition: all 0.3s;
 }
 .icon-toggle:hover { border-color: var(--acid); box-shadow: 0 0 12px var(--acid-glow); }
+
+.credit-btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 13px; letter-spacing: 1px;
+  background: rgba(10,20,15,0.8); border: 1px solid var(--hazard);
+  color: var(--hazard); height: 44px; padding: 0 16px; border-radius: 22px;
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  backdrop-filter: blur(5px); transition: all 0.3s;
+}
+.credit-btn:hover { background: var(--hazard); color: #000; box-shadow: 0 0 15px rgba(255,183,0,0.5); }
+
+/* STATIC CREDITS MODAL STYLES (นิ่ง อ่านง่าย) */
+#creditsModal {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(2, 6, 4, 0.92); backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+#creditsModal.active { opacity: 1; visibility: visible; }
+
+.credits-card {
+  background: var(--panel-bg); border: 1px solid var(--panel-border);
+  border-radius: 8px; width: 100%; max-width: 580px; max-height: 85vh;
+  padding: 24px; box-shadow: 0 0 30px rgba(0,255,102,0.1), inset 0 0 15px rgba(0,0,0,0.8);
+  display: flex; flex-direction: column; gap: 20px; overflow-y: auto;
+  position: relative;
+}
+
+/* Custom Scrollbar สำหรับหน้าต่าง Credits */
+.credits-card::-webkit-scrollbar { width: 6px; }
+.credits-card::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
+.credits-card::-webkit-scrollbar-thumb { background: var(--acid-dim); border-radius: 3px; }
+.credits-card::-webkit-scrollbar-thumb:hover { background: var(--acid); }
+
+.credits-header {
+  border-bottom: 1px dashed var(--acid-dim); padding-bottom: 12px; text-align: center;
+}
+.credits-header .title-text {
+  font-family: 'Share Tech Mono', monospace; color: var(--acid); font-size: 20px;
+  letter-spacing: 2px; font-weight: bold;
+}
+.credits-header .sub-text {
+  font-family: 'Share Tech Mono', monospace; color: var(--hazard); font-size: 13px;
+  letter-spacing: 3px; margin-top: 4px;
+}
+
+.credits-body { display: flex; flex-direction: column; gap: 20px; text-align: center; }
+
+.credit-group {
+  background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 6px; padding: 12px 16px;
+}
+.credit-group .title {
+  font-family: 'Share Tech Mono', monospace; color: var(--hazard); font-size: 12px;
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; opacity: 0.9;
+}
+.credit-group .name {
+  font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 1px;
+}
+.credit-group .role {
+  font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--acid);
+  letter-spacing: 1.5px; margin-top: 2px; text-transform: uppercase;
+}
+
+.member-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 6px;
+}
+.member-item {
+  background: rgba(0,255,102,0.03); border: 1px solid rgba(0,255,102,0.1);
+  padding: 8px; border-radius: 4px;
+}
+.member-item .name { font-size: 15px; font-weight: 600; color: #d3e0d8; }
+.member-item .role { font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--hazard); margin-top: 2px; }
+
+.close-credits-btn { margin-top: 10px; align-self: center; width: 100%; max-width: 200px; }
 
 #gameScene { justify-content: flex-start; padding-top: 2vh; }
 .hud {
@@ -454,7 +532,54 @@ p.lore {
     <div id="flicker"></div>
   </div>
 
-  <button class="icon-toggle" id="soundToggle" title="เปิด/ปิดเสียง">🔊</button>
+  <div class="top-controls">
+    <button class="credit-btn" id="openCredits">👥 CREDITS</button>
+    <button class="icon-toggle" id="soundToggle" title="เปิด/ปิดเสียง">🔊</button>
+  </div>
+
+  <!-- STATIC CREDITS MODAL (นิ่ง อ่านง่าย) -->
+  <div id="creditsModal">
+    <div class="credits-card">
+      <div class="credits-header">
+        <div class="title-text">👥 คณะผู้จัดทำ (CREDITS)</div>
+        <div class="sub-text">CLASS M.5/5 PRESENTATION</div>
+      </div>
+
+      <div class="credits-body">
+        <div class="credit-group">
+          <div class="title">Web Developer & System Designer</div>
+          <div class="name">นายปภาวิน รามรินทร์</div>
+          <div class="role">เลขที่ 7 // Lead Programmer & UI Design</div>
+        </div>
+
+        <div class="credit-group">
+          <div class="title">Creative Director & Concept Designer</div>
+          <div class="name">นางสาวนัชพร เพ็ชรไข่</div>
+          <div class="role">เลขที่ 30 // Project Idea & Concept</div>
+        </div>
+
+        <div class="credit-group">
+          <div class="title">Data Researchers & Content Specialists</div>
+          <div class="member-grid">
+            <div class="member-item">
+              <div class="name">นายกษิภูมิ ณ ศิริ</div>
+              <div class="role">เลขที่ 1 // Data Analyst</div>
+            </div>
+            <div class="member-item">
+              <div class="name">นายบัญญาวัต บุญรอด</div>
+              <div class="role">เลขที่ 6 // Data Analyst</div>
+            </div>
+            <div class="member-item">
+              <div class="name">นายศรัณย์ภีม์ ชนะสิทธิ์</div>
+              <div class="role">เลขที่ 23 // Data Analyst</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn small close-credits-btn" id="closeCredits">ปิดหน้าต่าง [ESC]</button>
+    </div>
+  </div>
 
   <section class="scene active" id="startScene">
     <h1 class="title">เอาตัวรอดใน<br>แลปปริศนา</h1>
@@ -603,7 +728,7 @@ const BASE_QUESTIONS = [
 
 const ALL_TERMS = BASE_QUESTIONS.map(q=>q.ans);
 const MAX_WRONG = 4;
-const QUESTION_TIME_LIMIT = 15; // วินาทีต่อข้อ
+const QUESTION_TIME_LIMIT = 15;
 
 function shuffle(arr){
   const a = arr.slice();
@@ -632,7 +757,7 @@ let state = {
   items: { fiftyFifty: true, freeze: true }
 };
 
-/* Canvas Particle System (Chemical Dust/Sparks) */
+/* Canvas Particle System */
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
@@ -670,6 +795,20 @@ function animateParticles(){
   requestAnimationFrame(animateParticles);
 }
 animateParticles();
+
+/* Credits Modal Handler */
+const creditsModal = document.getElementById('creditsModal');
+document.getElementById('openCredits').addEventListener('click', ()=>{
+  creditsModal.classList.add('active');
+});
+document.getElementById('closeCredits').addEventListener('click', ()=>{
+  creditsModal.classList.remove('active');
+});
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && creditsModal.classList.contains('active')){
+    creditsModal.classList.remove('active');
+  }
+});
 
 /* Audio System */
 let actx = null;
@@ -816,7 +955,7 @@ document.getElementById('soundToggle').addEventListener('click', (e)=>{
 document.getElementById('doorTotal').textContent = BASE_QUESTIONS.length;
 
 function resetGame(){
-  state.questions = shuffle(BASE_QUESTIONS); // สุ่มลำดับคำถามใหม่
+  state.questions = shuffle(BASE_QUESTIONS);
   state.doorIndex = 0;
   state.wrong = 0;
   state.startTime = Date.now();
@@ -870,7 +1009,6 @@ function updateGhost(){
   const ghost = document.getElementById('ghost');
   ghost.classList.remove('approach1','approach2','approach3','lunge');
   
-  // ปรับบรรยากาศไฟตามระดับความอันตราย
   const vignette = document.getElementById('vignette');
   if(state.wrong === 1) {
     ghost.classList.add('approach1');
@@ -885,7 +1023,6 @@ function updateGhost(){
   }
 }
 
-/* Timer Control */
 function startQuestionTimer(){
   clearInterval(state.timer);
   state.timeLeft = QUESTION_TIME_LIMIT;
@@ -1006,7 +1143,6 @@ function handleWrongAnswer(){
   }
 }
 
-/* Items Action */
 document.getElementById('btnItem5050').addEventListener('click', ()=>{
   if(!state.items.fiftyFifty) return;
   state.items.fiftyFifty = false;
